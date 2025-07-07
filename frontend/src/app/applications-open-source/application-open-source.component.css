@@ -1,0 +1,44 @@
+.custom-save-btn {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #28a745;
+  background-color: #e6f2fa;
+  color: #28a745;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 2rem;
+  transition: background 0.2s, border 0.2s;
+  box-shadow: none;
+}
+.custom-save-btn:hover {
+  background-color: #d4f5e9;
+  border-color: #218838;
+  color: #218838;
+}
+
+.custom-delete-btn {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #dc3545;
+  background-color: transparent;
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 2rem;
+  transition: background 0.2s, border 0.2s;
+  box-shadow: none;
+}
+.custom-delete-btn:hover {
+  background-color: #f8d7da;
+  border-color: #b52a37;
+  color: #b52a37;
+}
+
+.dropdown-menu img {
+  border-radius: 4px;
+  background: #f8f9fa;
+}

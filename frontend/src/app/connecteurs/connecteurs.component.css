@@ -1,0 +1,89 @@
+.table {
+  font-size: 1.1rem;
+}
+
+.table th {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.table-row {
+  height: 70px;
+}
+
+.btn-lg {
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.bi {
+  font-size: 1.2rem;
+}
+
+.custom-save-btn {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #28a745; /* Vert Bootstrap */
+  background-color: #e6f2fa; /* Fond bleu très clair */
+  color: #28a745;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 2rem;
+  transition: background 0.2s, border 0.2s;
+  box-shadow: none;
+}
+
+.custom-save-btn:hover {
+  background-color: #d4f5e9;
+  border-color: #218838;
+  color: #218838;
+}
+
+.custom-delete-btn {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #dc3545; /* Rouge Bootstrap */
+  background-color: transparent;
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 2rem;
+  transition: background 0.2s, border 0.2s;
+  box-shadow: none;
+}
+
+.custom-delete-btn:hover {
+  background-color: #f8d7da;
+  border-color: #b52a37;
+  color: #b52a37;
+}
+
+.table-row textarea.form-control {
+  min-height: 38px;
+  max-height: 38px;
+  height: 38px;
+  resize: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.table-row input.form-control {
+  min-height: 38px;
+  max-height: 38px;
+  height: 38px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}

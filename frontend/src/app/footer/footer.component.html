@@ -1,0 +1,257 @@
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>ArabSoft Middleware</h3>
+      <p>Votre partenaire de confiance pour l'intégration de données et la synchronisation multi-sources.</p>
+      <div class="footer-social-block">
+        <div class="social-title">Suivez-nous</div>
+        <div class="social-links">
+          <a href="https://www.facebook.com/profile.php?id=100069779273053" class="social-link social-facebook" target="_blank" rel="noopener noreferrer">
+            <img src="assets/facebook.png" alt="Facebook" class="social-img">
+          </a>
+          <a href="https://www.linkedin.com/company/arabsoft/?originalSubdomain=tn" class="social-link social-linkedin" target="_blank" rel="noopener noreferrer">
+            <img src="assets/linkedin.png" alt="LinkedIn" class="social-img">
+          </a>
+          <a href="https://www.skype.com/fr/" class="social-link social-skype" target="_blank" rel="noopener noreferrer">
+            <img src="assets/skype.png" alt="Skype" class="social-img">
+          </a>
+          <a href="https://workspace.google.com/intl/fr/gmail/" class="social-link social-mail" target="_blank" rel="noopener noreferrer">
+            <img src="assets/mail.png" alt="Mail" class="social-img">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li><i class="fas fa-map-marker-alt"></i> <a href="https://www.google.com/maps?q=Rue+8368+-bloc+A-+Espace+El+Aziz,+lot+Ennassim+-+Montplaisir-+1073+Tunis+TUNISIE" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;">Rue 8368 -bloc A- Espace El Aziz,<br>lot Ennassim - Montplaisir- 1073 Tunis TUNISIE</a></li>
+        <li><i class="fas fa-phone"></i> +216.71.95.12.48</li>
+        <li><i class="fas fa-fax"></i> +216.71.95.10.44</li>
+        <li><i class="fas fa-envelope"></i> arabsoft&#64;arabsoft.com.tn</li>
+        <li><i class="fas fa-envelope"></i> marketing&#64;arabsoft.com.tn</li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>Liens Rapides</h4>
+      <ul class="quick-links">
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">À propos</a></li>
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#servicesModal">Services</a></li>
+        <li><a href="#" data-bs-toggle="modal" data-bs-target="#solutionsModal">Solutions</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>Newsletter</h4>
+      <p>Restez informé de nos dernières actualités</p>
+      <form [formGroup]="newsletterForm" (ngSubmit)="onSubmitNewsletter()" class="newsletter-form">
+        <input 
+          type="email" 
+          placeholder="Votre email" 
+          formControlName="email"
+          [ngClass]="{'is-invalid': newsletterForm.get('email')?.invalid && newsletterForm.get('email')?.touched}"
+        >
+        <button 
+          type="submit" 
+          [disabled]="newsletterForm.invalid || isSubmitting"
+        >
+          <span *ngIf="!isSubmitting">S'abonner</span>
+          <span *ngIf="isSubmitting">Envoi...</span>
+        </button>
+        <div *ngIf="newsletterForm.get('email')?.invalid && newsletterForm.get('email')?.touched" class="invalid-feedback">
+          <div *ngIf="newsletterForm.get('email')?.errors?.['required']">L'email est requis</div>
+          <div *ngIf="newsletterForm.get('email')?.errors?.['email']">Format d'email invalide</div>
+        </div>
+        <div *ngIf="newsletterMessage" class="success-message">
+          {{ newsletterMessage }}
+        </div>
+        <div *ngIf="newsletterError" class="error-message">
+          {{ newsletterError }}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2024 ArabSoft Middleware. Tous droits réservés.</p>
+    <div class="footer-links">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Politique de confidentialité</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Conditions d'utilisation</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#legalModal">Mentions légales</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal À propos -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header draggable-modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <i class="bi bi-info-circle-fill fs-3 me-2"></i>
+        <h5 class="modal-title" id="aboutModalLabel">À propos d'Arab Soft</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3 fs-5" style="color: #003366;">
+          <strong>Créé en 1985 par Mohamed TRIKI</strong>, ARAB SOFT s'est spécialisée dans l'étude, le développement et la distribution de solutions de gestion notamment pour le secteur public.
+        </p>
+        <p style="color: #046aa1;">
+          À une époque où toutes les solutions proposées sont en langue française ou anglaise, ARAB SOFT a su se démarquer en proposant sur le plan local des solutions bilingues en Français et en Arabe.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Services -->
+<div class="modal fade" id="servicesModal" tabindex="-1" aria-labelledby="servicesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header draggable-modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <i class="bi bi-briefcase-fill fs-3 me-2"></i>
+        <h5 class="modal-title" id="servicesModalLabel">Services ARABSOFT</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #003366;">
+        <p class="text-center fs-5 mb-4">Découvrez nos principaux services pour accompagner la réussite de vos projets numériques.</p>
+        <div class="services-grid">
+          <div class="service-card">
+            <i class="bi bi-person-check service-icon"></i>
+            <div class="service-title">Étude & cadrage</div>
+            <div class="service-desc">Analyse des besoins client et cadrage du projet.</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-gear service-icon"></i>
+            <div class="service-title">Conception</div>
+            <div class="service-desc">Solutions adaptées aux spécificités client.</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-hdd-network service-icon"></i>
+            <div class="service-title">Installation</div>
+            <div class="service-desc">Mise en place et paramétrage des solutions.</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-diagram-3 service-icon"></i>
+            <div class="service-title">Interfaçage</div>
+            <div class="service-desc">Connexion avec systèmes tiers.</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-mortarboard service-icon"></i>
+            <div class="service-title">Formation</div>
+            <div class="service-desc">Formations adaptées à chaque profil utilisateur.</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-headset service-icon"></i>
+            <div class="service-title">Assistance</div>
+            <div class="service-desc">Support réactif et suivi client.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Solutions -->
+<div class="modal fade" id="solutionsModal" tabindex="-1" aria-labelledby="solutionsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header draggable-modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <i class="bi bi-grid-3x3-gap-fill fs-3 me-2"></i>
+        <h5 class="modal-title" id="solutionsModalLabel">Nos Solutions</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #003366;">
+        <p class="text-center fs-5 mb-4">Découvrez nos solutions logicielles adaptées à chaque métier.</p>
+        <div class="services-grid">
+          <div class="service-card">
+            <i class="bi bi-people-fill service-icon"></i>
+            <div class="service-title">AJIR</div>
+            <div class="service-desc">Gestion des Ressources Humaines</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-basket2-fill service-icon"></i>
+            <div class="service-title">ARZAK</div>
+            <div class="service-desc">Gestion des achats, Stocks & Immobilisations</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-shield-check service-icon"></i>
+            <div class="service-title">MERKAZIA</div>
+            <div class="service-desc">Centrale information et risques</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-building service-icon"></i>
+            <div class="service-title">XLIA</div>
+            <div class="service-desc">Gestion Hôtelière</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-file-earmark-bar-graph service-icon"></i>
+            <div class="service-title">JIBAYA</div>
+            <div class="service-desc">Gestion des dossiers des contribuables, impôts, déclarations</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-cash-coin service-icon"></i>
+            <div class="service-title">AMIN</div>
+            <div class="service-desc">Gestion financière et comptable</div>
+          </div>
+          <div class="service-card">
+            <i class="bi bi-lightning-charge-fill service-icon"></i>
+            <div class="service-title">HAYET</div>
+            <div class="service-desc">Gestionnaires de Réseaux et Fournisseurs d'Energie</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Politique de confidentialité -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header draggable-modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <i class="bi bi-shield-lock-fill fs-3 me-2"></i>
+        <h5 class="modal-title" id="privacyModalLabel">Politique de confidentialité</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #003366;">
+        <p>ArabSoft s'engage à protéger la confidentialité de vos données personnelles. Les informations collectées via ce site sont utilisées uniquement pour la gestion de nos services et l'amélioration de votre expérience. Vos données ne sont jamais revendues à des tiers. Pour toute demande relative à vos données personnelles, contactez-nous à arabsoft&#64;arabsoft.com.tn.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Conditions d'utilisation -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header draggable-modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <i class="bi bi-file-earmark-text-fill fs-3 me-2"></i>
+        <h5 class="modal-title" id="termsModalLabel">Conditions d'utilisation</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #003366;">
+        <p>L'utilisation de ce site implique l'acceptation pleine et entière des présentes conditions. Les contenus et services proposés sont la propriété d'ArabSoft. Toute reproduction ou utilisation non autorisée est interdite. ArabSoft se réserve le droit de modifier à tout moment les présentes conditions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Mentions légales -->
+<div class="modal fade" id="legalModal" tabindex="-1" aria-labelledby="legalModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header draggable-modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <i class="bi bi-info-square-fill fs-3 me-2"></i>
+        <h5 class="modal-title" id="legalModalLabel">Mentions légales</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #003366;">
+        <p><strong>Éditeur :</strong> ArabSoft, Rue 8368 - Bloc A - Espace El Aziz, lot Ennassim - Montplaisir - 1073 Tunis, TUNISIE</p>
+        <p><strong>Directeur de la publication :</strong> Mohamed TRIKI</p>
+        <p><strong>Contact :</strong> arabsoft&#64;arabsoft.com.tn</p>
+        <p>Pour toute question relative au site ou à son contenu, veuillez nous contacter à l'adresse ci-dessus.</p>
+      </div>
+    </div>
+  </div>
+</div>

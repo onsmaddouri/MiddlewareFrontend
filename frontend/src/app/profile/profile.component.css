@@ -1,0 +1,141 @@
+.profile-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e6f0ff 100%);
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.profile-card {
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(74, 144, 226, 0.15);
+  background: rgba(255,255,255,0.98);
+  max-width: 420px;
+  width: 100%;
+  border: none;
+  transition: box-shadow 0.3s, transform 0.3s;
+  position: relative;
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4a90e2 0%, #b3d9ff 100%);
+  border: 5px solid #fff;
+  box-shadow: 0 0 0 8px rgba(74,144,226,0.10), 0 4px 24px rgba(74,144,226,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  color: #4a90e2;
+  margin: 0 auto 1.2rem auto;
+  transition: box-shadow 0.3s;
+}
+
+.profile-username {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #046aa1;
+  letter-spacing: 0.5px;
+}
+
+.profile-role {
+  font-size: 1rem;
+  font-weight: 500;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.4em 1.2em;
+  margin-top: 0.5rem;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+}
+
+.profile-info {
+  font-size: 1.13rem;
+  color: #495057;
+  background: rgba(74,144,226,0.04);
+  border-radius: 14px;
+  padding: 1.2rem 1rem 1rem 1rem;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.04);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.1rem;
+  font-size: 1.08rem;
+}
+
+.info-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  color: #357abd;
+  min-width: 70px;
+}
+
+.info-value {
+  color: #222;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.content-section {
+  flex: 1;
+  background: rgba(255,255,255,0.98);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(74, 144, 226, 0.15);
+  padding: 2rem;
+  height: fit-content;
+}
+
+.content-section h2 {
+  color: #046aa1;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.content-section p {
+  color: #495057;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 992px) {
+  .profile-container {
+    flex-direction: column;
+  }
+  
+  .profile-card {
+    max-width: 100%;
+  }
+  
+  .content-section {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-card {
+    padding: 1.2rem 0.5rem;
+    max-width: 98vw;
+  }
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 3rem;
+    margin-bottom: 0.8rem;
+  }
+  .profile-username {
+    font-size: 1.2rem;
+  }
+  .profile-info {
+    padding: 0.7rem 0.3rem 0.5rem 0.3rem;
+  }
+}

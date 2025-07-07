@@ -1,0 +1,36 @@
+<div class="admin-layout">
+  <nav class="sidebar-admin">
+    <ul>
+      <li routerLink="/admin/dashboard" routerLinkActive="active">
+        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+      </li>
+      <li routerLink="/admin/flux" routerLinkActive="active">
+        <i class="bi bi-diagram-3"></i><span>Flux</span>
+      </li>
+      <li routerLink="/admin/connecteurs" routerLinkActive="active">
+        <i class="bi bi-plug"></i><span>Connecteurs</span>
+      </li>
+      <li routerLink="/admin/generateurs" routerLinkActive="active">
+        <i class="bi bi-lightning-charge"></i><span>Générateurs</span>
+      </li>
+      <li routerLink="/admin/utilisateurs" routerLinkActive="active">
+        <i class="bi bi-people"></i><span>Utilisateurs</span>
+      </li>
+      <li routerLink="/admin/erreurs" routerLinkActive="active">
+        <i class="bi bi-exclamation-triangle"></i><span>Erreurs</span>
+      </li>
+      <li routerLink="/admin/rapports" routerLinkActive="active">
+        <i class="bi bi-bar-chart"></i><span>Rapports</span>
+      </li>
+      <li routerLink="/admin/applications" routerLinkActive="active">
+        <i class="bi bi-app"></i><span>Applications Open Source</span>
+      </li>
+      <li [routerLink]="['/admin/erp']" routerLinkActive="active" style="cursor: pointer;">
+        <i class="bi bi-building"></i><span>ERP</span>
+      </li>
+    </ul>
+  </nav>
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

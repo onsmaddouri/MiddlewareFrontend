@@ -1,0 +1,123 @@
+<div class="container-fluid login-container">
+  <div class="row min-vh-100">
+    <!-- Section gauche - Informations -->
+    <div class="col-md-6 d-none d-md-flex flex-column justify-content-center align-items-center info-section">
+      <div class="info-content text-center">
+        <img src="assets/Capture d'écran 2025-04-19 143925.png" alt="ArabSoft Logo" class="info-logo mb-4">
+        <h2 class="info-title mb-4">ArabSoft Middleware</h2>
+        <div class="encouragement-message mb-4">
+          <p class="mb-0">Connectez-vous dès maintenant pour accéder à toutes ces fonctionnalités et optimiser vos flux de données.</p>
+        </div>
+        <p class="info-text mb-4">
+          Plateforme de gestion des flux de données pour une intégration efficace et sécurisée
+        </p>
+        <div class="features-list">
+          <div class="feature-item">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Intégration de données en temps réel</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Protection des données sensibles</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Tableaux de bord analytiques</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-cogs"></i>
+            <span>Configuration flexible des flux</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section droite - Formulaire de connexion -->
+    <div class="col-md-6 d-flex align-items-start justify-content-center pt-3">
+      <div class="card login-card">
+        <!-- En-tête de la carte -->
+        <div class="card-header text-center">
+          <h4 class="card-title">Connexion</h4>
+        </div>
+
+        <!-- Corps de la carte -->
+        <div class="card-body">
+          <!-- Formulaire de connexion -->
+          <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+            <!-- Champ Nom d'utilisateur -->
+            <div class="form-group mb-4">
+              <label for="username" class="form-label">Nom d'utilisateur</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-user"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  [(ngModel)]="form.username"
+                  required
+                  #username="ngModel"
+                  [ngClass]="{ 'is-invalid': f.submitted && username.errors }"
+                  placeholder="Entrez votre nom d'utilisateur"
+                />
+              </div>
+              <div *ngIf="username.errors && f.submitted" class="invalid-feedback">
+                Nom d'utilisateur requis
+              </div>
+            </div>
+
+            <!-- Champ Mot de passe -->
+            <div class="form-group mb-4">
+              <label for="password" class="form-label">Mot de passe</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  [(ngModel)]="form.password"
+                  required
+                  minlength="6"
+                  #password="ngModel"
+                  [ngClass]="{ 'is-invalid': f.submitted && password.errors }"
+                  placeholder="Entrez votre mot de passe"
+                />
+              </div>
+              <div *ngIf="password.errors && f.submitted" class="invalid-feedback">
+                <div *ngIf="password.errors['required']">Mot de passe requis</div>
+                <div *ngIf="password.errors['minlength']">Au moins 6 caractères</div>
+              </div>
+            </div>
+
+            <!-- Message d'erreur -->
+            <div *ngIf="f.submitted && isLoginFailed" class="alert alert-danger" role="alert">
+              <i class="fas fa-exclamation-circle me-2"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Connexion
+              </button>
+              <a routerLink="/register" class="btn btn-outline-primary">
+                <i class="fas fa-user-plus me-2"></i>Créer un compte
+              </a>
+            </div>
+          </form>
+
+          <!-- Message de succès -->
+          <div *ngIf="isLoggedIn" class="alert alert-success text-center">
+            <i class="fas fa-check-circle me-2"></i>
+            Connexion réussie ! Redirection en cours...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

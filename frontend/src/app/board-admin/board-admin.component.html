@@ -1,0 +1,33 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h2>Tableau de Bord Administrateur</h2>
+    <div class="user-stats">
+      <div class="stat-card">
+        <i class="bi bi-people"></i>
+        <div class="stat-info">
+          <h3>{{ userCount }}</h3>
+          <p>Utilisateurs</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="content-section">
+      <h3>Bienvenue sur le Tableau de Bord</h3>
+      <p>{{ content }}</p>
+    </div>
+
+    <div class="quick-actions">
+      <button class="btn btn-primary" routerLink="/admin/utilisateurs">
+        <i class="bi bi-people"></i> Gérer les Utilisateurs
+      </button>
+      <button class="btn btn-success" routerLink="/admin/flux">
+        <i class="bi bi-diagram-3"></i> Gérer les Flux
+      </button>
+      <button class="btn btn-info" routerLink="/admin/connecteurs">
+        <i class="bi bi-plug"></i> Gérer les Connecteurs
+      </button>
+    </div>
+  </div>
+</div> 

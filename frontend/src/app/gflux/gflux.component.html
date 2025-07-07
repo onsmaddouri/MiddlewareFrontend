@@ -1,0 +1,241 @@
+<div class="table-responsive">
+  <form class="d-flex mb-3" (ngSubmit)="onSearch()" #searchForm="ngForm" style="gap: 12px; align-items: stretch;">
+    <input type="text" class="form-control" placeholder="Nom du flux" [(ngModel)]="search.nomFlux" name="nomFlux" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
+    <!-- Dropdown Statut -->
+    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
+      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
+        {{ search.statut || 'Statut' }}
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li>
+          <a class="dropdown-item" href="#" (click)="search.statut = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+        </li>
+        <li *ngFor="let s of ['EN_ATTENTE', 'EN_COURS', 'TERMINE', 'ECHEC']">
+          <a class="dropdown-item" href="#" (click)="search.statut = s; onSearch(); $event.preventDefault();">{{ s }}</a>
+        </li>
+      </ul>
+    </div>
+    <input type="date" class="form-control" [(ngModel)]="search.dateCreation" name="dateCreation" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
+    <!-- Dropdown Connecteur -->
+    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
+      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
+        {{ search.connecteur || 'Connecteur' }}
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li>
+          <a class="dropdown-item" href="#" (click)="search.connecteur = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+        </li>
+        <li *ngFor="let c of connecteurs">
+          <a class="dropdown-item" href="#" (click)="search.connecteur = c.nom; onSearch(); $event.preventDefault();">{{ c.nom }}</a>
+        </li>
+      </ul>
+    </div>
+    <!-- Dropdown Générateur -->
+    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px;">
+      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
+        {{ search.generateur || 'Générateur' }}
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li>
+          <a class="dropdown-item" href="#" (click)="search.generateur = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+        </li>
+        <li *ngFor="let g of generateurs">
+          <a class="dropdown-item" href="#" (click)="search.generateur = g.nom; onSearch(); $event.preventDefault();">{{ g.nom }}</a>
+        </li>
+      </ul>
+    </div>
+    <button type="submit"
+            class="btn btn-outline-primary"
+            [disabled]="!atLeastOneFilled()"
+            style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
+      <i class="bi bi-search" style="font-size: 1rem;"></i>
+    </button>
+  </form>
+
+  <table class="table table-bordered table-striped table-hover text-center">
+    <thead class="thead-light">
+      <tr>
+        <th>Nom</th>
+        <th>Type</th>
+        <th>Date de création</th>
+        <th>Statut</th>
+        <th>Archivé</th>
+        <th>Validé</th>
+        <th>Annulé</th>
+        <th>Modifié par</th>
+        <th>Connecteur</th>
+        <th>Générateur</th>
+        <th class="text-center align-middle" style="vertical-align: middle;">
+          <div style="display: flex; justify-content: flex-start; align-items: center; gap: 12px;">
+            <button class="btn btn-outline-success btn-sm"
+                    style="width: 48px; height: 48px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    (click)="onAddFlux()"
+                    title="Ajouter flux">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+            <!-- Place réservée pour un futur bouton -->
+            <span style="width: 40px; height: 40px; display: inline-block;"></span>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr *ngFor="let flux of filteredFluxList">
+    
+        <!-- nomFlux modifiable -->
+        <td>
+          <input *ngIf="editingId === flux.idFlux" [(ngModel)]="flux.nomFlux" class="form-control" />
+          <span *ngIf="editingId !== flux.idFlux">{{ flux.nomFlux }}</span>
+        </td>
+    
+        <!-- typeFlux modifiable -->
+        <td>
+          <input *ngIf="editingId === flux.idFlux" [(ngModel)]="flux.typeFlux" class="form-control" />
+          <span *ngIf="editingId !== flux.idFlux">{{ flux.typeFlux }}</span>
+        </td>
+    
+        <td>{{ flux.dateCreation | date:'shortDate' }}</td>
+    
+        <td>
+          <span *ngIf="flux.statut === 'EN_ATTENTE'" class="badge badge-warning badge-status">EN_ATTENTE</span>
+          <span *ngIf="flux.statut === 'ECHEC'" class="badge badge-danger badge-status">ECHEC</span>
+          <span *ngIf="flux.statut === 'EN_COURS'" class="badge badge-info badge-status">EN_COURS</span>
+          <span *ngIf="flux.statut === 'TERMINE'" class="badge badge-termine badge-status">TERMINE</span>
+          <span *ngIf="flux.statut === 'ARCHIVE'" class="badge badge-secondary badge-status">ARCHIVE</span>
+        </td>
+    
+        <!-- Archivé -->
+        <td>
+          <span class="badge badge-success" *ngIf="flux.archived" style="cursor:pointer" (click)="unarchiveFlux(flux)">Oui</span>
+          <span class="badge badge-secondary" *ngIf="!flux.archived" style="cursor:pointer" (click)="archiveFlux(flux)">Non</span>
+        </td>
+        <!-- Validé -->
+        <td>
+          <span class="badge badge-success" *ngIf="flux.validated" style="cursor:pointer" (click)="unvalidateFlux(flux)">Oui</span>
+          <span class="badge badge-secondary" *ngIf="!flux.validated" style="cursor:pointer" (click)="validateFlux(flux)">Non</span>
+        </td>
+        <!-- Annulé -->
+        <td>
+          <span class="badge badge-success" *ngIf="flux.cancelled" style="cursor:pointer" (click)="uncancelFlux(flux)">Oui</span>
+          <span class="badge badge-secondary" *ngIf="!flux.cancelled" style="cursor:pointer" (click)="cancelFlux(flux)">Non</span>
+        </td>
+        <td>{{ flux.modifiedBy }}</td>
+        <td>{{ flux.connecteur?.nomConnecteur || 'N/A' }}</td>
+        <td>{{ flux.generateurFlux?.nomGenerateur || 'N/A' }}</td>
+    
+      <!-- Actions -->
+    <td class="d-flex justify-content-center align-items-center gap-2">
+    
+      <!-- Modifier -->
+      <button *ngIf="editingId !== flux.idFlux"
+              (click)="startEditing(flux.idFlux)"
+              class="btn btn-sm btn-outline-primary"
+              title="Modifier">
+        <i class="bi bi-pencil"></i>
+      </button>
+    
+      <!-- Enregistrer -->
+      <button *ngIf="editingId === flux.idFlux"
+              (click)="saveChanges(flux)"
+              class="btn btn-sm btn-outline-success"
+              title="Enregistrer">
+        <i class="bi bi-save"></i>
+      </button>
+    
+      <!-- Bouton supprimer qui ouvre la modal -->
+      <button class="btn btn-sm btn-outline-danger"
+      title="Supprimer"
+      (click)="openDeleteModal(flux)">
+    <i class="bi bi-trash"></i>
+    </button>
+    
+    
+    </td>
+    <td></td>
+            
+      </tr>
+      
+    </tbody>
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
+        <div class="modal-content shadow rounded-4 border-0" style="background: #fff;">
+          <div class="modal-header py-2" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+            <i class="bi bi-exclamation-circle-fill fs-4 me-2"></i>
+            <h6 class="modal-title fw-bold" id="deleteConfirmModalLabel">Voulez-vous supprimer le flux&nbsp;?</h6>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer" (click)="cancelDelete()"></button>
+          </div>
+          <div class="modal-body text-center py-3">
+            <div class="mb-2 fs-6" style="color: #046aa1;">
+              Le flux <span class="fw-bold">{{ fluxToDelete?.nomFlux }}</span> sera supprimé.
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center gap-3 border-0 pb-3">
+            <button type="button" class="btn btn-outline-primary rounded-pill px-3" style="min-width: 60px;" (click)="cancelDelete()">Non</button>
+            <button type="button" class="btn btn-primary rounded-pill px-3" style="min-width: 60px;" (click)="confirmDelete()">Oui</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </table>
+</div>
+
+<!-- Modal d'ajout de flux -->
+<div class="modal fade" id="addFluxModal" tabindex="-1" aria-labelledby="addFluxModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" (ngSubmit)="submitAddFlux()" #addFluxForm="ngForm">
+      <div class="modal-header" style="background: linear-gradient(to bottom, #204d74 0%, #4a77a8 100%); color: #fff;">
+        <h5 class="modal-title" id="addFluxModalLabel">Ajouter un flux</h5>
+        <button type="button"
+                class="btn-close btn-close-white"
+                aria-label="Fermer"
+                (click)="closeAddFluxModal()">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label>Nom du flux</label>
+          <input type="text" class="form-control" [(ngModel)]="newFlux.nomFlux" name="nomFlux" required>
+        </div>
+        <div class="mb-2">
+          <label>Type</label>
+          <input type="text" class="form-control" [(ngModel)]="newFlux.typeFlux" name="typeFlux" required>
+        </div>
+        <div class="mb-2">
+          <label>Connecteur</label>
+          <select class="form-control" [(ngModel)]="newFlux.connecteur" name="connecteur" required>
+            <option *ngFor="let c of connecteurs" [ngValue]="c">{{ c.nom }}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>Générateur</label>
+          <select class="form-control" [(ngModel)]="newFlux.generateurFlux" name="generateurFlux" required>
+            <option *ngFor="let g of generateurs" [ngValue]="g">{{ g.nom }}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>Date de création</label>
+          <input type="text" class="form-control" [value]="today | date:'yyyy-MM-dd'" disabled>
+        </div>
+        <div class="mb-2">
+          <label>Statut</label>
+          <input type="text" class="form-control" value="EN_ATTENTE" disabled>
+        </div>
+      </div>
+      <div class="modal-footer flex-column">
+        <button type="submit"
+                class="btn w-100 mb-2"
+                style="background: linear-gradient(to bottom, #204d74 0%, #4a77a8 100%); color: #fff; border: none;">
+          Ajouter
+        </button>
+        <button type="button"
+                class="btn w-100"
+                (click)="closeAddFluxModal()"
+                style="background: #eaf0fa; color: #204d74; border: none;">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+  
