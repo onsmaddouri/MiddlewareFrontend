@@ -1,10 +1,173 @@
-<div class="admin-container d-flex justify-content-center align-items-center">
-  <div class="card admin-card text-center p-5">
-    <img src="assets/Capture d'écran 2025-04-19 143925.png" alt="Logo ArabSoft" class="admin-logo mb-4" />
+<div class="user-dashboard">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Tableau de Bord Utilisateur</h1>
+      <p class="dashboard-subtitle">Gestion des flux et consultation des rapports</p>
+    </div>
+    <button class="btn btn-outline-light" (click)="refreshStatistics()" [disabled]="loading">
+      <i *ngIf="!loading" class="bi bi-arrow-clockwise"></i>
+      <i *ngIf="loading" class="bi bi-hourglass-split"></i>
+      {{ loading ? 'Actualisation...' : 'Actualiser' }}
+    </button>
+  </div>
 
-    <h2 class="text-dark mb-3">Bienvenue sur le <strong>Tableau Utilisateur</strong></h2>
-    <p class="text-muted">Middleware ArabSoft</p>
+  <!-- Actions Utilisateur selon le Use Case -->
+  <div class="user-actions">
+    <div class="actions-grid">
+      
+      <!-- Gestion des Flux -->
+      <div class="action-section">
+        <h3><i class="bi bi-diagram-3-fill"></i> Gestion des Flux</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" routerLink="/user/launch-flux">
+            <i class="bi bi-play-circle"></i> Lancer Flux
+          </button>
+        </div>
+      </div>
 
-    <button class="btn btn-primary mt-4 px-4 py-2" (click)="logout()">Se déconnecter</button>
+      <!-- Consultation et Suivi -->
+      <div class="action-section">
+        <h3><i class="bi bi-graph-up"></i> Consultation et Suivi</h3>
+        <div class="action-buttons">
+          <button class="btn btn-info" routerLink="/user/reports">
+            <i class="bi bi-file-earmark-text"></i> Consulter Rapports
+          </button>
+          <button class="btn btn-success" routerLink="/user/monitoring">
+            <i class="bi bi-eye"></i> Suivre Flux
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Statistiques Utilisateur -->
+  <div class="user-stats">
+    <div *ngIf="loading" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des statistiques...</p>
+    </div>
+    
+    <div *ngIf="!loading" class="stats-grid">
+      <!-- Statistiques des Flux -->
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-diagram-3-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ totalFluxCount }}</h3>
+          <p>Flux Totaux</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-play-circle-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ activeFluxCount }}</h3>
+          <p>Flux Actifs</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ completedFluxCount }}</h3>
+          <p>Flux Terminés</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ failedFluxCount }}</h3>
+          <p>Flux Échoués</p>
+        </div>
+      </div>
+
+      <!-- Statistiques des Rapports -->
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-file-earmark-text-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ reportsCount }}</h3>
+          <p>Rapports Totaux</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-download-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ availableReportsCount }}</h3>
+          <p>Rapports Disponibles</p>
+        </div>
+      </div>
+
+      <!-- Statistiques des Connecteurs -->
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-plug-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ totalConnecteursCount }}</h3>
+          <p>Connecteurs Totaux</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-wifi"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ activeConnecteursCount }}</h3>
+          <p>Connecteurs Actifs</p>
+        </div>
+      </div>
+
+      <!-- Statistiques des ERP -->
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-building-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ totalERPsCount }}</h3>
+          <p>ERP Totaux</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-shield-check-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ activeERPsCount }}</h3>
+          <p>ERP Actifs</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="content-section">
+      <div class="section-header">
+        <h3><i class="bi bi-info-circle"></i> Informations Utilisateur</h3>
+      </div>
+      <div class="welcome-message">
+        <p>{{ content }}</p>
+        <button class="btn btn-secondary mt-3" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Se déconnecter
+        </button>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,0 +1,83 @@
+<div class="logs-management">
+  <!-- Bouton de retour -->
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+      <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+    </button>
+  </div>
+  
+  <div class="page-header">
+    <h1><i class="bi bi-file-text-fill"></i> Consultation des Logs</h1>
+    <p>Surveiller et analyser les logs du système</p>
+  </div>
+
+  <!-- Formulaire de recherche -->
+  <div class="search-section">
+    <form (ngSubmit)="onSearch()" class="search-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Niveau</label>
+          <select class="form-control" [(ngModel)]="search.level" name="level">
+            <option value="">Tous les niveaux</option>
+            <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Source</label>
+          <input type="text" class="form-control" [(ngModel)]="search.source" name="source" placeholder="Rechercher par source...">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" class="form-control" [(ngModel)]="search.date" name="date">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" [disabled]="!atLeastOneFilled()">
+            <i class="bi bi-search"></i> Rechercher
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tableau des logs -->
+  <div class="table-section">
+    <div *ngIf="loading" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des logs...</p>
+    </div>
+    
+    <table *ngIf="!loading" class="table table-bordered table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Date/Heure</th>
+          <th>Niveau</th>
+          <th>Source</th>
+          <th>Message</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of filteredLogs">
+          <td>{{ log.timestamp | date:'short' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getLogLevelBadgeClass(log.level)">
+              {{ log.level }}
+            </span>
+          </td>
+          <td>{{ log.source }}</td>
+          <td>{{ log.message }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-info" 
+                    [attr.data-bs-toggle]="'tooltip'" 
+                    [attr.data-bs-placement]="'top'" 
+                    [title]="log.details">
+              <i class="bi bi-info-circle"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

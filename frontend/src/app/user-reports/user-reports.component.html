@@ -1,0 +1,43 @@
+<div class="user-reports">
+  <div class="page-header">
+    <h1><i class="bi bi-file-earmark-text-fill"></i> Consultation des Rapports</h1>
+    <p>Consulter et télécharger les rapports disponibles</p>
+  </div>
+
+  <div class="reports-section">
+    <div *ngIf="loading" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des rapports...</p>
+    </div>
+    
+    <div *ngIf="!loading" class="reports-grid">
+      <div class="report-card" *ngFor="let report of reports">
+        <div class="report-header">
+          <h3>{{ report.title }}</h3>
+          <span class="badge" [ngClass]="report.status === 'DISPONIBLE' ? 'badge-success' : 'badge-warning'">
+            {{ report.status }}
+          </span>
+        </div>
+        <div class="report-content">
+          <p>{{ report.description }}</p>
+          <div class="report-meta">
+            <small class="text-muted">
+              <i class="bi bi-calendar"></i> {{ report.dateGenerated | date:'short' }}
+              <span class="mx-2">•</span>
+              <i class="bi bi-tag"></i> {{ report.type }}
+            </small>
+          </div>
+        </div>
+        <div class="report-actions">
+          <button class="btn btn-primary" 
+                  (click)="downloadReport(report)"
+                  [disabled]="report.status !== 'DISPONIBLE'">
+            <i class="bi bi-download"></i> Télécharger
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

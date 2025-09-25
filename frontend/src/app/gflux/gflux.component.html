@@ -1,3 +1,11 @@
+<!-- Bouton de retour -->
+<div class="mb-3">
+  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+  </button>
+</div>
+
+
 <div class="table-responsive">
   <form class="d-flex mb-3" (ngSubmit)="onSearch()" #searchForm="ngForm" style="gap: 12px; align-items: stretch;">
     <input type="text" class="form-control" placeholder="Nom du flux" [(ngModel)]="search.nomFlux" name="nomFlux" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
@@ -16,31 +24,53 @@
       </ul>
     </div>
     <input type="date" class="form-control" [(ngModel)]="search.dateCreation" name="dateCreation" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
-    <!-- Dropdown Connecteur -->
-    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
+    <!-- Dropdown Source -->
+    <div class="dropdown" style="max-width: 200px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
       <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-        {{ search.connecteur || 'Connecteur' }}
+        <i class="bi bi-arrow-up-circle me-1"></i>{{ search.source || 'Source' }}
       </button>
-      <ul class="dropdown-menu w-100">
+      <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
         <li>
-          <a class="dropdown-item" href="#" (click)="search.connecteur = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+          <a class="dropdown-item" href="#" (click)="search.source = ''; onSearch(); $event.preventDefault();">
+            <i class="bi bi-x-circle me-2 text-muted"></i>Aucun filtre
+          </a>
         </li>
-        <li *ngFor="let c of connecteurs">
-          <a class="dropdown-item" href="#" (click)="search.connecteur = c.nom; onSearch(); $event.preventDefault();">{{ c.nom }}</a>
+        <li><hr class="dropdown-divider"></li>
+        <li *ngFor="let module of allModules">
+          <a class="dropdown-item" href="#" (click)="search.source = module.nom; onSearch(); $event.preventDefault();">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-gear-fill me-2" [ngClass]="getModuleTypeClass(module)"></i>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">{{ module.nom }}</div>
+                <small class="text-muted">{{ getModuleTypeLabel(module) }}</small>
+              </div>
+            </div>
+          </a>
         </li>
       </ul>
     </div>
-    <!-- Dropdown Générateur -->
-    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px;">
+    <!-- Dropdown Destination -->
+    <div class="dropdown" style="max-width: 200px; align-self: flex-start; margin-top: -4px;">
       <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-        {{ search.generateur || 'Générateur' }}
+        <i class="bi bi-arrow-down-circle me-1"></i>{{ search.destination || 'Destination' }}
       </button>
-      <ul class="dropdown-menu w-100">
+      <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
         <li>
-          <a class="dropdown-item" href="#" (click)="search.generateur = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+          <a class="dropdown-item" href="#" (click)="search.destination = ''; onSearch(); $event.preventDefault();">
+            <i class="bi bi-x-circle me-2 text-muted"></i>Aucun filtre
+          </a>
         </li>
-        <li *ngFor="let g of generateurs">
-          <a class="dropdown-item" href="#" (click)="search.generateur = g.nom; onSearch(); $event.preventDefault();">{{ g.nom }}</a>
+        <li><hr class="dropdown-divider"></li>
+        <li *ngFor="let module of allModules">
+          <a class="dropdown-item" href="#" (click)="search.destination = module.nom; onSearch(); $event.preventDefault();">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-gear-fill me-2" [ngClass]="getModuleTypeClass(module)"></i>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">{{ module.nom }}</div>
+                <small class="text-muted">{{ getModuleTypeLabel(module) }}</small>
+              </div>
+            </div>
+          </a>
         </li>
       </ul>
     </div>
@@ -50,9 +80,16 @@
             style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
       <i class="bi bi-search" style="font-size: 1rem;"></i>
     </button>
+    <button type="button"
+            class="btn btn-outline-secondary"
+            (click)="resetFilters()"
+            style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
+      <i class="bi bi-arrow-clockwise" style="font-size: 1rem;"></i>
+    </button>
   </form>
 
-  <table class="table table-bordered table-striped table-hover text-center">
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover text-center">
     <thead class="thead-light">
       <tr>
         <th>Nom</th>
@@ -63,8 +100,8 @@
         <th>Validé</th>
         <th>Annulé</th>
         <th>Modifié par</th>
-        <th>Connecteur</th>
-        <th>Générateur</th>
+        <th>Source</th>
+        <th>Destination</th>
         <th class="text-center align-middle" style="vertical-align: middle;">
           <div style="display: flex; justify-content: flex-start; align-items: center; gap: 12px;">
             <button class="btn btn-outline-success btn-sm"
@@ -107,22 +144,60 @@
     
         <!-- Archivé -->
         <td>
-          <span class="badge badge-success" *ngIf="flux.archived" style="cursor:pointer" (click)="unarchiveFlux(flux)">Oui</span>
-          <span class="badge badge-secondary" *ngIf="!flux.archived" style="cursor:pointer" (click)="archiveFlux(flux)">Non</span>
+          <button class="btn btn-sm badge-success" *ngIf="flux.archived" (click)="unarchiveFlux(flux)">Oui</button>
+          <button class="btn btn-sm badge-secondary" *ngIf="!flux.archived" (click)="archiveFlux(flux)">Non</button>
         </td>
         <!-- Validé -->
         <td>
-          <span class="badge badge-success" *ngIf="flux.validated" style="cursor:pointer" (click)="unvalidateFlux(flux)">Oui</span>
-          <span class="badge badge-secondary" *ngIf="!flux.validated" style="cursor:pointer" (click)="validateFlux(flux)">Non</span>
+          <button class="btn btn-sm badge-success" *ngIf="flux.validated" (click)="unvalidateFlux(flux)">Oui</button>
+          <button class="btn btn-sm badge-secondary" *ngIf="!flux.validated" (click)="validateFlux(flux)">Non</button>
         </td>
         <!-- Annulé -->
         <td>
-          <span class="badge badge-success" *ngIf="flux.cancelled" style="cursor:pointer" (click)="uncancelFlux(flux)">Oui</span>
-          <span class="badge badge-secondary" *ngIf="!flux.cancelled" style="cursor:pointer" (click)="cancelFlux(flux)">Non</span>
+          <button class="btn btn-sm badge-success" *ngIf="flux.cancelled" (click)="uncancelFlux(flux)">Oui</button>
+          <button class="btn btn-sm badge-secondary" *ngIf="!flux.cancelled" (click)="cancelFlux(flux)">Non</button>
         </td>
         <td>{{ flux.modifiedBy }}</td>
-        <td>{{ flux.connecteur?.nomConnecteur || 'N/A' }}</td>
-        <td>{{ flux.generateurFlux?.nomGenerateur || 'N/A' }}</td>
+        <td>
+          <div class="source-info" *ngIf="flux.sourceErpModule || flux.sourceAppModule">
+            <div class="source-type">
+              <span class="badge badge-primary" *ngIf="flux.sourceErpModule">ERP</span>
+              <span class="badge badge-info" *ngIf="flux.sourceAppModule">APP</span>
+            </div>
+            <div class="source-module clickable-module" 
+                 *ngIf="flux.sourceErpModule && flux.sourceErpModule.nom"
+                 (click)="showModuleDetails(flux.sourceErpModule)"
+                 title="Cliquer pour voir les détails">
+              <strong>{{ flux.sourceErpModule.nom }}</strong>
+            </div>
+            <div class="source-module clickable-module" 
+                 *ngIf="flux.sourceAppModule && flux.sourceAppModule.nom"
+                 (click)="showModuleDetails(flux.sourceAppModule)"
+                 title="Cliquer pour voir les détails">
+              <strong>{{ flux.sourceAppModule.nom }}</strong>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="destination-info" *ngIf="flux.destinationErpModule || flux.destinationAppModule">
+            <div class="destination-type">
+              <span class="badge badge-primary" *ngIf="flux.destinationErpModule">ERP</span>
+              <span class="badge badge-info" *ngIf="flux.destinationAppModule">APP</span>
+            </div>
+            <div class="destination-module clickable-module" 
+                 *ngIf="flux.destinationErpModule && flux.destinationErpModule.nom"
+                 (click)="showModuleDetails(flux.destinationErpModule)"
+                 title="Cliquer pour voir les détails">
+              <strong>{{ flux.destinationErpModule.nom }}</strong>
+            </div>
+            <div class="destination-module clickable-module" 
+                 *ngIf="flux.destinationAppModule && flux.destinationAppModule.nom"
+                 (click)="showModuleDetails(flux.destinationAppModule)"
+                 title="Cliquer pour voir les détails">
+              <strong>{{ flux.destinationAppModule.nom }}</strong>
+            </div>
+          </div>
+        </td>
     
       <!-- Actions -->
     <td class="d-flex justify-content-center align-items-center gap-2">
@@ -142,6 +217,7 @@
               title="Enregistrer">
         <i class="bi bi-save"></i>
       </button>
+
     
       <!-- Bouton supprimer qui ouvre la modal -->
       <button class="btn btn-sm btn-outline-danger"
@@ -152,7 +228,6 @@
     
     
     </td>
-    <td></td>
             
       </tr>
       
@@ -180,6 +255,7 @@
   </table>
 </div>
 
+
 <!-- Modal d'ajout de flux -->
 <div class="modal fade" id="addFluxModal" tabindex="-1" aria-labelledby="addFluxModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -201,11 +277,92 @@
           <label>Type</label>
           <input type="text" class="form-control" [(ngModel)]="newFlux.typeFlux" name="typeFlux" required>
         </div>
-        <div class="mb-2">
-          <label>Connecteur</label>
-          <select class="form-control" [(ngModel)]="newFlux.connecteur" name="connecteur" required>
-            <option *ngFor="let c of connecteurs" [ngValue]="c">{{ c.nom }}</option>
-          </select>
+        <!-- Source -->
+        <div class="mb-3">
+          <h6 class="text-primary"><i class="bi bi-arrow-up-circle"></i> Source</h6>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Type Source</label>
+              <select class="form-control" [(ngModel)]="newFlux.sourceType" name="sourceType" (change)="onSourceTypeChange()" required>
+                <option value="">Sélectionner...</option>
+                <option value="ERP">ERP</option>
+                <option value="APP">Application Open Source</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label>Application Source</label>
+              <select class="form-control" [(ngModel)]="newFlux.sourceApplication" name="sourceApplication" (change)="onSourceApplicationChange()" required>
+                <option value="">Sélectionner...</option>
+                <ng-container *ngIf="newFlux.sourceType === 'ERP'">
+                  <option *ngFor="let erp of erps" [ngValue]="erp">{{ erp.nom }}</option>
+                </ng-container>
+                <ng-container *ngIf="newFlux.sourceType === 'APP'">
+                  <option *ngFor="let app of applications" [ngValue]="app">{{ app.nom }}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <label>Module Source</label>
+              <select class="form-control" [(ngModel)]="newFlux.sourceModule" name="sourceModule" required>
+                <option value="">Sélectionner...</option>
+                <option *ngFor="let module of sourceModules" [ngValue]="module">
+                  {{ module.nom }}
+                </option>
+              </select>
+              <div *ngIf="newFlux.sourceModule" class="mt-2 p-2 bg-light rounded">
+                <small class="text-muted">
+                  <strong>Module sélectionné :</strong> {{ newFlux.sourceModule.nom }}<br>
+                  <strong>Description :</strong> {{ newFlux.sourceModule.description || 'Aucune description' }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Destination -->
+        <div class="mb-3">
+          <h6 class="text-success"><i class="bi bi-arrow-down-circle"></i> Destination</h6>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Type Destination</label>
+              <select class="form-control" [(ngModel)]="newFlux.destinationType" name="destinationType" (change)="onDestinationTypeChange()" required>
+                <option value="">Sélectionner...</option>
+                <option value="ERP">ERP</option>
+                <option value="APP">Application Open Source</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label>Application Destination</label>
+              <select class="form-control" [(ngModel)]="newFlux.destinationApplication" name="destinationApplication" (change)="onDestinationApplicationChange()" required>
+                <option value="">Sélectionner...</option>
+                <ng-container *ngIf="newFlux.destinationType === 'ERP'">
+                  <option *ngFor="let erp of erps" [ngValue]="erp">{{ erp.nom }}</option>
+                </ng-container>
+                <ng-container *ngIf="newFlux.destinationType === 'APP'">
+                  <option *ngFor="let app of applications" [ngValue]="app">{{ app.nom }}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <label>Module Destination</label>
+              <select class="form-control" [(ngModel)]="newFlux.destinationModule" name="destinationModule" required>
+                <option value="">Sélectionner...</option>
+                <option *ngFor="let module of destinationModules" [ngValue]="module">
+                  {{ module.nom }}
+                </option>
+              </select>
+              <div *ngIf="newFlux.destinationModule" class="mt-2 p-2 bg-light rounded">
+                <small class="text-muted">
+                  <strong>Module sélectionné :</strong> {{ newFlux.destinationModule.nom }}<br>
+                  <strong>Description :</strong> {{ newFlux.destinationModule.description || 'Aucune description' }}
+                </small>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="mb-2">
           <label>Générateur</label>
@@ -236,6 +393,129 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails du module -->
+<div class="modal fade" id="moduleDetailsModal" tabindex="-1" aria-labelledby="moduleDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <div class="modal-header" style="background: linear-gradient(to bottom right, #003366, #4a77a8); color: white; border-radius: 15px 15px 0 0; border: none;">
+        <h5 class="modal-title" id="moduleDetailsModalLabel">
+          <i class="bi bi-info-circle me-2"></i>Détails du Module
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeModuleModal()" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body" style="padding: 2rem;" *ngIf="selectedModule">
+        <!-- En-tête du module -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+              <div class="module-icon me-3" [ngClass]="getModuleTypeClass(selectedModule)">
+                <i class="bi bi-gear-fill" style="font-size: 2rem;"></i>
+              </div>
+              <div>
+                <h4 class="mb-1" style="color: #2c3e50; font-weight: 600;">{{ selectedModule.nom }}</h4>
+                <p class="mb-0 text-muted">{{ getModuleTypeWithIcon(selectedModule) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations principales -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-card-text me-2"></i>Description
+              </h6>
+              <p class="info-content">{{ selectedModule.description || 'Aucune description disponible' }}</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-toggle-on me-2"></i>Statut
+              </h6>
+              <p class="info-content">
+                <span class="badge" [ngClass]="selectedModule.actif ? 'badge-success' : 'badge-danger'">
+                  {{ selectedModule.actif ? 'Actif' : 'Inactif' }}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-calendar-plus me-2"></i>Date de création
+              </h6>
+              <p class="info-content">{{ selectedModule.dateCreation | date:'dd/MM/yyyy à HH:mm' }}</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-calendar-check me-2"></i>Dernière modification
+              </h6>
+              <p class="info-content">{{ selectedModule.dateModification | date:'dd/MM/yyyy à HH:mm' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="row mb-4" *ngIf="selectedModule.configuration">
+          <div class="col-12">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-gear me-2"></i>Configuration
+              </h6>
+              <div class="config-content">
+                <pre class="config-json">{{ formatJson(selectedModule.configuration) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Endpoints -->
+        <div class="row mb-4" *ngIf="selectedModule.endpoints">
+          <div class="col-12">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-link-45deg me-2"></i>Endpoints
+              </h6>
+              <div class="config-content">
+                <pre class="config-json">{{ formatJson(selectedModule.endpoints) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schéma -->
+        <div class="row mb-4" *ngIf="selectedModule.schema">
+          <div class="col-12">
+            <div class="info-card">
+              <h6 class="info-title">
+                <i class="bi bi-diagram-3 me-2"></i>Schéma de données
+              </h6>
+              <div class="config-content">
+                <pre class="config-json">{{ formatJson(selectedModule.schema) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer" style="border: none; padding: 1.5rem 2rem;">
+        <button type="button" class="btn" (click)="closeModuleModal()" style="background: #eaf0fa; color: #003366; border: 1px solid #003366;">
+          <i class="bi bi-x-circle me-2"></i>Fermer
+        </button>
+      </div>
+    </div>
   </div>
 </div>
   

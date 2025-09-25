@@ -1,33 +1,230 @@
 <div class="admin-dashboard">
   <div class="dashboard-header">
-    <h2>Tableau de Bord Administrateur</h2>
-    <div class="user-stats">
-      <div class="stat-card">
-        <i class="bi bi-people"></i>
+    <div class="header-content">
+      <h1>Tableau de Bord Administrateur</h1>
+      <p class="dashboard-subtitle">Gestion complète du Middleware d'Intégration</p>
+      <div class="header-stats">
+        <span class="total-stats">Total: {{ userCount + fluxCount + connecteurCount + generateurCount + erpCount }} éléments</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-container">
+    <div class="stats-grid">
+      <div class="stat-card users clickable-card" (click)="onStatCardClick('users')">
+        <div class="stat-icon">
+          <i class="bi bi-people-fill"></i>
+        </div>
         <div class="stat-info">
           <h3>{{ userCount }}</h3>
           <p>Utilisateurs</p>
+          <span class="stat-description">Utilisateurs actifs</span>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-check-circle"></i>
+        </div>
+      </div>
+
+      <div class="stat-card flux clickable-card" (click)="onStatCardClick('flux')">
+        <div class="stat-icon">
+          <i class="bi bi-diagram-3-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ fluxCount }}</h3>
+          <p>Flux de Données</p>
+          <span class="stat-description">Flux configurés</span>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-arrow-repeat"></i>
+        </div>
+      </div>
+
+      <div class="stat-card connecteurs clickable-card" (click)="onStatCardClick('connecteurs')">
+        <div class="stat-icon">
+          <i class="bi bi-plug-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ connecteurCount }}</h3>
+          <p>Connecteurs</p>
+          <span class="stat-description">Connexions actives</span>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-wifi"></i>
+        </div>
+      </div>
+
+      <div class="stat-card generateurs clickable-card" (click)="onStatCardClick('generateurs')">
+        <div class="stat-icon">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ generateurCount }}</h3>
+          <p>Générateurs</p>
+          <span class="stat-description">Générateurs de flux</span>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-gear"></i>
+        </div>
+      </div>
+
+      <div class="stat-card erp clickable-card" (click)="onStatCardClick('erp')">
+        <div class="stat-icon">
+          <i class="bi bi-building-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ erpCount }}</h3>
+          <p>Systèmes ERP</p>
+          <span class="stat-description">ERP intégrés</span>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-shield-check"></i>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Carte d'information détaillée -->
+  <div class="info-card-overlay" *ngIf="showInfoCard" (click)="closeInfoCard()">
+    <div class="info-card" (click)="$event.stopPropagation()">
+      <div class="info-card-header">
+        <h3>{{ infoCardTitle }}</h3>
+        <button class="close-btn" (click)="closeInfoCard()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      
+      <div class="info-card-content">
+        <div *ngIf="loadingDetails" class="loading-container">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Chargement...</span>
+          </div>
+          <p>Chargement des données...</p>
+        </div>
+        
+        <div *ngIf="!loadingDetails && infoCardData.length === 0" class="no-data">
+          <i class="bi bi-inbox"></i>
+          <p>Aucune donnée disponible</p>
+        </div>
+        
+        <div *ngIf="!loadingDetails && infoCardData.length > 0" class="data-list">
+          <div *ngFor="let item of infoCardData" class="data-item">
+            <div class="item-info">
+              <h4>{{ getItemName(item) }}</h4>
+              <p>{{ getItemDescription(item) }}</p>
+            </div>
+            <button class="detail-btn" (click)="showItemDetails(item)">
+              <i class="bi bi-eye"></i>
+              Détail
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de détails d'un élément -->
+  <div class="details-modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="details-modal" (click)="$event.stopPropagation()">
+      <div class="details-modal-header">
+        <h3>Détails de {{ selectedItemName }}</h3>
+        <button class="close-btn" (click)="closeDetailsModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      
+      <div class="details-modal-content">
+        <div class="details-grid">
+          <div *ngFor="let detail of selectedItemDetails" class="detail-item">
+            <span class="detail-label">{{ detail.label }}:</span>
+            <span class="detail-value">{{ detail.value }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions Administrateur selon le Use Case -->
+  <div class="admin-actions">
+    <div class="actions-grid">
+      
+      <!-- Gestion des Flux -->
+      <div class="action-section">
+        <h3><i class="bi bi-diagram-3-fill"></i> Gestion des Flux</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" routerLink="/admin/flux">
+            <i class="bi bi-play-circle"></i> Lancer Flux
+          </button>
+          <button class="btn btn-success" routerLink="/admin/flux">
+            <i class="bi bi-check-circle"></i> Valider Flux
+          </button>
+          <button class="btn btn-warning" routerLink="/admin/flux">
+            <i class="bi bi-archive"></i> Archiver Flux
+          </button>
+          <button class="btn btn-danger" routerLink="/admin/flux">
+            <i class="bi bi-x-circle"></i> Annuler Flux
+          </button>
+        </div>
+      </div>
+
+      <!-- Configuration des Connecteurs -->
+      <div class="action-section">
+        <h3><i class="bi bi-plug-fill"></i> Configuration</h3>
+        <div class="action-buttons">
+          <button class="btn btn-info" routerLink="/admin/connecteurs">
+            <i class="bi bi-gear"></i> Configurer Connecteurs
+          </button>
+          <button class="btn btn-info" routerLink="/admin/erp">
+            <i class="bi bi-building"></i> ERP
+          </button>
+          <button class="btn btn-info" routerLink="/admin/applications">
+            <i class="bi bi-app"></i> Applications Open Source
+          </button>
+          <button class="btn btn-info" routerLink="/admin/erp-modules">
+            <i class="bi bi-gear-fill"></i> Configurer Modules ERP
+          </button>
+          <button class="btn btn-info" routerLink="/admin/application-modules">
+            <i class="bi bi-puzzle-fill"></i> Configurer Modules Open Source
+          </button>
+        </div>
+      </div>
+
+      <!-- Modélisation -->
+      <div class="action-section">
+        <h3><i class="bi bi-lightning-charge-fill"></i> Modélisation</h3>
+        <div class="action-buttons">
+          <button class="btn btn-secondary" routerLink="/admin/generateurs">
+            <i class="bi bi-diagram-2"></i> Modéliser Flux
+          </button>
+        </div>
+      </div>
+
+      <!-- Administration -->
+      <div class="action-section">
+        <h3><i class="bi bi-shield-check"></i> Administration</h3>
+        <div class="action-buttons">
+          <button class="btn btn-dark" (click)="manageUserRights()">
+            <i class="bi bi-people"></i> Gérer Droits Utilisateurs
+          </button>
+          <button class="btn btn-secondary" (click)="consultLogs()">
+            <i class="bi bi-file-text"></i> Consulter Logs
+          </button>
+          <button class="btn btn-warning" (click)="manageErrors()">
+            <i class="bi bi-exclamation-triangle"></i> Gérer Erreurs
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="dashboard-content">
     <div class="content-section">
-      <h3>Bienvenue sur le Tableau de Bord</h3>
-      <p>{{ content }}</p>
-    </div>
-
-    <div class="quick-actions">
-      <button class="btn btn-primary" routerLink="/admin/utilisateurs">
-        <i class="bi bi-people"></i> Gérer les Utilisateurs
-      </button>
-      <button class="btn btn-success" routerLink="/admin/flux">
-        <i class="bi bi-diagram-3"></i> Gérer les Flux
-      </button>
-      <button class="btn btn-info" routerLink="/admin/connecteurs">
-        <i class="bi bi-plug"></i> Gérer les Connecteurs
-      </button>
+      <div class="section-header">
+        <h3><i class="bi bi-info-circle"></i> Informations Système</h3>
+      </div>
+      <div class="welcome-message">
+        <p>{{ content }}</p>
+      </div>
     </div>
   </div>
 </div> 

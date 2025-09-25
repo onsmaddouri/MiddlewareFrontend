@@ -1,0 +1,424 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <!-- Bouton de retour -->
+      <div class="mb-3">
+        <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+          <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+        </button>
+      </div>
+      
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-white border-0 py-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-1 text-dark fw-bold">
+                <i class="bi bi-gear-fill text-primary me-2"></i>
+                Modules ERP
+              </h4>
+              <p class="text-muted mb-0">Gérez les modules des systèmes ERP</p>
+            </div>
+            <button class="btn btn-primary rounded-pill px-4" (click)="openAddModal()">
+              <i class="bi bi-plus-circle me-2"></i>Ajouter un Module
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Barre de recherche -->
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-start-0" 
+                       placeholder="Rechercher par nom..." 
+                       [(ngModel)]="search.nom" 
+                       (input)="onSearch()">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" [(ngModel)]="search.typeModule" (change)="onSearch()">
+                <option value="">Tous les types</option>
+                <option value="COMPETITION">COMPETITION</option>
+                <option value="PRODUCT">PRODUCT</option>
+                <option value="TRAINING">TRAINING</option>
+                <option value="USER">USER</option>
+                <option value="DATA">DATA</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" [(ngModel)]="search.actif" (change)="onSearch()">
+                <option value="">Tous les statuts</option>
+                <option value="true">Actif</option>
+                <option value="false">Inactif</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-outline-secondary w-100" 
+                      (click)="search = {nom: '', typeModule: '', actif: ''}; onSearch()"
+                      [disabled]="!atLeastOneFilled()">
+                <i class="bi bi-x-circle me-1"></i>Effacer
+              </button>
+            </div>
+          </div>
+
+          <!-- Tableau des modules -->
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 20%;">Nom</th>
+                  <th style="width: 15%;">Type</th>
+                  <th style="width: 20%;">Description</th>
+                  <th style="width: 20%;">Configuration</th>
+                  <th style="width: 10%;">Statut</th>
+                  <th style="width: 15%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let module of filteredModules; trackBy: trackByModuleId">
+                  <td>
+                    <div *ngIf="editingId !== module.id" class="fw-semibold text-dark">
+                      {{ module.nom }}
+                    </div>
+                    <input *ngIf="editingId === module.id" 
+                           type="text" 
+                           class="form-control form-control-sm" 
+                           [(ngModel)]="editedModule.nom">
+                  </td>
+                  <td>
+                    <div *ngIf="editingId !== module.id">
+                      <span class="badge bg-info">{{ module.typeModule }}</span>
+                    </div>
+                    <select *ngIf="editingId === module.id" 
+                            class="form-select form-select-sm" 
+                            [(ngModel)]="editedModule.typeModule">
+                      <option value="COMPETITION">COMPETITION</option>
+                      <option value="PRODUCT">PRODUCT</option>
+                      <option value="TRAINING">TRAINING</option>
+                      <option value="USER">USER</option>
+                      <option value="DATA">DATA</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div *ngIf="editingId !== module.id" class="text-muted">
+                      {{ module.description }}
+                    </div>
+                    <input *ngIf="editingId === module.id" 
+                           type="text" 
+                           class="form-control form-control-sm" 
+                           [(ngModel)]="editedModule.description">
+                  </td>
+                  <td>
+                    <div *ngIf="editingId !== module.id" class="d-flex align-items-center">
+                      <span class="text-muted me-2">{{ getConfigPreview(module.configuration) }}</span>
+                      <button class="btn btn-sm btn-outline-primary" 
+                              (click)="showConfigDetail(module.configuration)"
+                              title="Voir la configuration complète">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                    <textarea *ngIf="editingId === module.id" 
+                              class="form-control form-control-sm" 
+                              rows="2" 
+                              [(ngModel)]="editedModule.configuration"></textarea>
+                  </td>
+                  <td>
+                    <div *ngIf="editingId !== module.id">
+                      <span class="badge" [class]="module.actif ? 'bg-success' : 'bg-secondary'">
+                        {{ module.actif ? 'Actif' : 'Inactif' }}
+                      </span>
+                    </div>
+                    <div *ngIf="editingId === module.id" class="form-check form-switch">
+                      <input class="form-check-input" 
+                             type="checkbox" 
+                             [(ngModel)]="editedModule.actif">
+                    </div>
+                  </td>
+                  <td>
+                    <div *ngIf="editingId !== module.id" class="btn-group" role="group">
+                      <button class="btn btn-sm btn-outline-primary" 
+                              (click)="startEditing(module)"
+                              title="Modifier">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" 
+                              (click)="openDeleteModal(module)"
+                              title="Supprimer">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="editingId === module.id" class="btn-group" role="group">
+                      <button class="btn btn-sm btn-success" 
+                              (click)="saveEdit()"
+                              title="Sauvegarder">
+                        <i class="bi bi-check"></i>
+                      </button>
+                      <button class="btn btn-sm btn-secondary" 
+                              (click)="cancelEdit()"
+                              title="Annuler">
+                        <i class="bi bi-x"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Message si aucun résultat -->
+          <div *ngIf="filteredModules.length === 0" class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">Aucun module trouvé</h5>
+            <p class="text-muted">Aucun module ne correspond à vos critères de recherche.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'ajout de module ERP -->
+<div class="modal fade" id="addERPModuleModal" tabindex="-1" aria-labelledby="addERPModuleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <h5 class="modal-title" id="addERPModuleModalLabel">
+          <i class="bi bi-plus-circle me-2"></i>Ajouter un Module ERP
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="nom" class="form-label">Nom du Module</label>
+              <input type="text" class="form-control" id="nom" [(ngModel)]="newModule.nom" name="nom" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="typeModule" class="form-label">Type de Module</label>
+              <select class="form-select" id="typeModule" [(ngModel)]="newModule.typeModule" name="typeModule" required>
+                <option value="">Sélectionner un type</option>
+                <option value="COMPETITION">COMPETITION</option>
+                <option value="PRODUCT">PRODUCT</option>
+                <option value="TRAINING">TRAINING</option>
+                <option value="USER">USER</option>
+                <option value="DATA">DATA</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" rows="3" [(ngModel)]="newModule.description" name="description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="schema" class="form-label">
+              Schéma (JSON)
+              <button type="button" class="btn btn-sm btn-outline-info ms-2" 
+                      (click)="openJsonGuide('schema')" 
+                      title="Guide JSON pour le schéma">
+                <i class="bi bi-question-circle"></i> Guide
+              </button>
+            </label>
+            <textarea class="form-control" 
+                      id="schema" 
+                      rows="3" 
+                      [(ngModel)]="newModule.schema" 
+                      name="schema"
+                      [class]="getJsonValidationClass('schema')"
+                      (input)="onJsonFieldChange('schema', $event)"></textarea>
+            <div *ngIf="getJsonValidationMessage('schema')" class="invalid-feedback">
+              {{ getJsonValidationMessage('schema') }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="endpoints" class="form-label">
+              Endpoints (JSON)
+              <button type="button" class="btn btn-sm btn-outline-info ms-2" 
+                      (click)="openJsonGuide('endpoints')" 
+                      title="Guide JSON pour les endpoints">
+                <i class="bi bi-question-circle"></i> Guide
+              </button>
+            </label>
+            <textarea class="form-control" 
+                      id="endpoints" 
+                      rows="3" 
+                      [(ngModel)]="newModule.endpoints" 
+                      name="endpoints"
+                      [class]="getJsonValidationClass('endpoints')"
+                      (input)="onJsonFieldChange('endpoints', $event)"></textarea>
+            <div *ngIf="getJsonValidationMessage('endpoints')" class="invalid-feedback">
+              {{ getJsonValidationMessage('endpoints') }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="configuration" class="form-label">
+              Configuration (JSON)
+              <button type="button" class="btn btn-sm btn-outline-info ms-2" 
+                      (click)="openJsonGuide('configuration')" 
+                      title="Guide JSON pour la configuration">
+                <i class="bi bi-question-circle"></i> Guide
+              </button>
+            </label>
+            <textarea class="form-control" 
+                      id="configuration" 
+                      rows="3" 
+                      [(ngModel)]="newModule.configuration" 
+                      name="configuration"
+                      [class]="getJsonValidationClass('configuration')"
+                      (input)="onJsonFieldChange('configuration', $event)"></textarea>
+            <div *ngIf="getJsonValidationMessage('configuration')" class="invalid-feedback">
+              {{ getJsonValidationMessage('configuration') }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="erp" class="form-label">ERP</label>
+            <select class="form-select" id="erp" [(ngModel)]="newModule.erp" name="erp">
+              <option value="">Sélectionner un ERP</option>
+              <option *ngFor="let erp of erps" [value]="erp">{{ erp.nom }}</option>
+            </select>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="actif" [(ngModel)]="newModule.actif" name="actif">
+            <label class="form-check-label" for="actif">
+              Module actif
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelAddModuleModal()">
+          <i class="bi bi-x-circle me-1"></i>Annuler
+        </button>
+        <button type="button" class="btn btn-primary" (click)="addModule()">
+          <i class="bi bi-check-circle me-1"></i>Ajouter
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteERPModuleModal" tabindex="-1" aria-labelledby="deleteERPModuleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-danger" id="deleteERPModuleModalLabel">
+          <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir supprimer le module <strong>{{ moduleToDelete?.nom }}</strong> ?</p>
+        <p class="text-muted small">Cette action est irréversible.</p>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">
+          <i class="bi bi-x-circle me-1"></i>Annuler
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()">
+          <i class="bi bi-trash me-1"></i>Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de détail de configuration -->
+<div class="modal fade" id="configDetailModal" tabindex="-1" aria-labelledby="configDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content shadow rounded-4 border-0">
+      <div class="modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <h5 class="modal-title" id="configDetailModalLabel">
+          <i class="bi bi-gear-fill me-2"></i>Configuration du Module
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeConfigModal()" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <div class="config-detail-container">
+          <pre class="config-json">{{ selectedConfig }}</pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeConfigModal()">
+          <i class="bi bi-x-circle me-1"></i>Fermer
+        </button>
+        <button type="button" class="btn btn-primary" (click)="copyConfig()">
+          <i class="bi bi-clipboard me-1"></i>Copier
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de guide JSON -->
+<div class="modal fade" id="jsonGuideModal" tabindex="-1" aria-labelledby="jsonGuideModalLabel" aria-hidden="true" [class.show]="showJsonGuide" [style.display]="showJsonGuide ? 'block' : 'none'" (click)="closeJsonGuide()">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content shadow rounded-4 border-0" (click)="$event.stopPropagation()">
+      <div class="modal-header" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff;">
+        <h5 class="modal-title" id="jsonGuideModalLabel">
+          <i class="bi bi-code-square me-2"></i>Guide JSON - {{ currentJsonField | titlecase }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeJsonGuide()" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div *ngIf="getCurrentTemplate()">
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>{{ getCurrentTemplate().description }}</strong>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-primary mb-3">
+                <i class="bi bi-file-code me-2"></i>Template JSON
+              </h6>
+              <div class="json-preview-container">
+                <pre class="json-preview">{{ getCurrentTemplate().template }}</pre>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-success mb-3">
+                <i class="bi bi-lightbulb me-2"></i>Instructions
+              </h6>
+              <div class="instructions-container">
+                <div class="instruction-item">
+                  <i class="bi bi-1-circle-fill text-primary me-2"></i>
+                  <span>Ce template est adapté au type de module <strong>{{ newModule.typeModule }}</strong></span>
+                </div>
+                <div class="instruction-item">
+                  <i class="bi bi-2-circle-fill text-primary me-2"></i>
+                  <span>Vous pouvez modifier les valeurs selon vos besoins</span>
+                </div>
+                <div class="instruction-item">
+                  <i class="bi bi-3-circle-fill text-primary me-2"></i>
+                  <span>Le JSON sera validé automatiquement</span>
+                </div>
+                <div class="instruction-item">
+                  <i class="bi bi-4-circle-fill text-primary me-2"></i>
+                  <span>Cliquez sur "Appliquer" pour utiliser ce template</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="!getCurrentTemplate()" class="text-center py-4">
+          <i class="bi bi-exclamation-triangle text-warning display-4"></i>
+          <h5 class="text-muted mt-3">Aucun template disponible</h5>
+          <p class="text-muted">Veuillez d'abord sélectionner un type de module pour voir les templates disponibles.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeJsonGuide()">
+          <i class="bi bi-x-circle me-1"></i>Fermer
+        </button>
+        <button type="button" class="btn btn-primary" (click)="applyTemplate()" [disabled]="!getCurrentTemplate()">
+          <i class="bi bi-check-circle me-1"></i>Appliquer le Template
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

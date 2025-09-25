@@ -1,12 +1,20 @@
+<!-- Bouton de retour -->
+<div class="mb-3">
+  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+  </button>
+</div>
+
 <form class="d-flex mb-3" (ngSubmit)="onSearch()" #searchForm="ngForm" style="gap: 8px; align-items: stretch;">
   <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="search.nom" name="nom" style="max-width: 140px;">
   <input type="text" class="form-control" placeholder="Version" [(ngModel)]="search.version" name="version" style="max-width: 120px;">
   <div class="dropdown" style="max-width: 160px;">
     <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <span *ngIf="search.logoUrl">
-        <img [src]="search.logoUrl" alt="logo" style="height: 24px; width: 40px; object-fit: contain; margin-right: 6px;">
+      <span *ngIf="search.logoUrl" class="d-flex align-items-center">
+        <img [src]="search.logoUrl" alt="logo" style="height: 28px; width: 42px; object-fit: contain; margin-right: 8px;">
+        <span class="logo-name">{{ getLogoName(search.logoUrl) }}</span>
       </span>
-      <span *ngIf="!search.logoUrl">Logo</span>
+      <span *ngIf="!search.logoUrl">Sélectionner Logo</span>
     </button>
     <ul class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto;">
       <li>
@@ -16,8 +24,8 @@
       </li>
       <li *ngFor="let url of logoUrls">
         <a class="dropdown-item d-flex align-items-center" href="#" (click)="search.logoUrl = url; onSearch(); $event.preventDefault();">
-          <img [src]="url" alt="logo" style="height: 24px; width: 40px; object-fit: contain; margin-right: 8px;">
-          <span>{{ url }}</span>
+          <img [src]="url" alt="logo" style="height: 32px; width: 48px; object-fit: contain; margin-right: 8px;">
+          <span class="logo-name">{{ getLogoName(url) }}</span>
         </a>
       </li>
     </ul>
@@ -27,6 +35,12 @@
           [disabled]="!atLeastOneFilled()"
           style="width: 40px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 0px;">
     <i class="bi bi-search" style="font-size: 1.1rem;"></i>
+  </button>
+  <button type="button"
+          class="btn btn-outline-secondary"
+          (click)="resetFilters()"
+          style="width: 40px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 0px;">
+    <i class="bi bi-arrow-clockwise" style="font-size: 1.1rem;"></i>
   </button>
 </form>
 

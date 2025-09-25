@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,6 +22,14 @@ import { ConnecteursComponent } from './connecteurs/connecteurs.component';
 import { ApplicationOpenSourceComponent } from './applications-open-source/application-open-source.component';
 import { ERPComponent } from './erp/erp.component';
 import { GenerateurFluxComponent } from './generateur-flux/generateur-flux.component';
+import { UserManagementComponent } from './user-management/user-management.component';
+import { LogsComponent } from './logs/logs.component';
+import { ErrorManagementComponent } from './error-management/error-management.component';
+import { UserReportsComponent } from './user-reports/user-reports.component';
+import { UserMonitoringComponent } from './user-monitoring/user-monitoring.component';
+import { FluxLauncherComponent } from './flux-launcher/flux-launcher.component';
+import { ApplicationOpenSourceModulesComponent } from './application-open-source-modules/application-open-source-modules.component';
+import { ERPModulesComponent } from './erp-modules/erp-modules.component';
 
 @NgModule({
   declarations: [
@@ -38,16 +47,25 @@ import { GenerateurFluxComponent } from './generateur-flux/generateur-flux.compo
     ConnecteursComponent,
     ApplicationOpenSourceComponent,
     ERPComponent,
-    GenerateurFluxComponent
+    GenerateurFluxComponent,
+    UserManagementComponent,
+    LogsComponent,
+    ErrorManagementComponent,
+    UserReportsComponent,
+    UserMonitoringComponent,
+    FluxLauncherComponent,
+        ApplicationOpenSourceModulesComponent,
+        ERPModulesComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

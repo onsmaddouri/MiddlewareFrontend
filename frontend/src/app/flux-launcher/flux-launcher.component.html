@@ -1,0 +1,142 @@
+<!-- Bouton de retour -->
+<div class="mb-3">
+  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+  </button>
+</div>
+
+<div class="table-responsive">
+  <form class="d-flex mb-3" (ngSubmit)="onSearch()" #searchForm="ngForm" style="gap: 12px; align-items: stretch;">
+    <input type="text" class="form-control" placeholder="Nom du flux" [(ngModel)]="search.nomFlux" name="nomFlux" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
+    <!-- Dropdown Statut -->
+    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
+      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
+        {{ search.statut || 'Statut' }}
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li>
+          <a class="dropdown-item" href="#" (click)="search.statut = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+        </li>
+        <li *ngFor="let s of ['EN_ATTENTE', 'EN_COURS', 'TERMINE', 'ECHEC']">
+          <a class="dropdown-item" href="#" (click)="search.statut = s; onSearch(); $event.preventDefault();">{{ s }}</a>
+        </li>
+      </ul>
+    </div>
+    <input type="date" class="form-control" [(ngModel)]="search.dateCreation" name="dateCreation" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
+    <!-- Dropdown Connecteur -->
+    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
+      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
+        {{ search.connecteur || 'Connecteur' }}
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li>
+          <a class="dropdown-item" href="#" (click)="search.connecteur = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+        </li>
+        <li *ngFor="let c of connecteurs">
+          <a class="dropdown-item" href="#" (click)="search.connecteur = c.nom; onSearch(); $event.preventDefault();">{{ c.nom }}</a>
+        </li>
+      </ul>
+    </div>
+    <!-- Dropdown Générateur -->
+    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px;">
+      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
+        {{ search.generateur || 'Générateur' }}
+      </button>
+      <ul class="dropdown-menu w-100">
+        <li>
+          <a class="dropdown-item" href="#" (click)="search.generateur = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+        </li>
+        <li *ngFor="let g of generateurs">
+          <a class="dropdown-item" href="#" (click)="search.generateur = g.nom; onSearch(); $event.preventDefault();">{{ g.nom }}</a>
+        </li>
+      </ul>
+    </div>
+    <button type="submit"
+            class="btn btn-outline-primary"
+            [disabled]="!atLeastOneFilled()"
+            style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
+      <i class="bi bi-search" style="font-size: 1rem;"></i>
+    </button>
+  </form>
+
+  <table class="table table-bordered table-striped table-hover text-center">
+    <thead class="thead-light">
+      <tr>
+        <th>Nom</th>
+        <th>Type</th>
+        <th>Date de création</th>
+        <th>Statut</th>
+        <th>Archivé</th>
+        <th>Validé</th>
+        <th>Annulé</th>
+        <th>Modifié par</th>
+        <th>Connecteur</th>
+        <th>Générateur</th>
+        <th class="text-center align-middle" style="vertical-align: middle;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 12px;">
+            <button class="btn btn-outline-success btn-sm"
+                    style="width: 48px; height: 48px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    (click)="launchAllActiveFlux()"
+                    title="Lancer tous les flux actifs">
+              <i class="bi bi-play-fill"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    
+    <tbody>
+      <tr *ngFor="let flux of filteredFluxList">
+    
+        <!-- nomFlux non modifiable -->
+        <td>{{ flux.nomFlux }}</td>
+    
+        <!-- typeFlux non modifiable -->
+        <td>{{ flux.typeFlux }}</td>
+    
+        <td>{{ flux.dateCreation | date:'shortDate' }}</td>
+    
+        <td>
+          <span *ngIf="flux.statut === 'EN_ATTENTE'" class="badge badge-warning badge-status">EN_ATTENTE</span>
+          <span *ngIf="flux.statut === 'ECHEC'" class="badge badge-danger badge-status">ECHEC</span>
+          <span *ngIf="flux.statut === 'EN_COURS'" class="badge badge-info badge-status">EN_COURS</span>
+          <span *ngIf="flux.statut === 'TERMINE'" class="badge badge-termine badge-status">TERMINE</span>
+          <span *ngIf="flux.statut === 'ARCHIVE'" class="badge badge-secondary badge-status">ARCHIVE</span>
+        </td>
+    
+        <!-- Archivé -->
+        <td>
+          <span class="badge badge-success" *ngIf="flux.archived">Oui</span>
+          <span class="badge badge-secondary" *ngIf="!flux.archived">Non</span>
+        </td>
+        <!-- Validé -->
+        <td>
+          <span class="badge badge-success" *ngIf="flux.validated">Oui</span>
+          <span class="badge badge-secondary" *ngIf="!flux.validated">Non</span>
+        </td>
+        <!-- Annulé -->
+        <td>
+          <span class="badge badge-success" *ngIf="flux.cancelled">Oui</span>
+          <span class="badge badge-secondary" *ngIf="!flux.cancelled">Non</span>
+        </td>
+        <td>{{ flux.modifiedBy }}</td>
+        <td>{{ flux.connecteur?.nomConnecteur || 'N/A' }}</td>
+        <td>{{ flux.generateurFlux?.nomGenerateur || 'N/A' }}</td>
+    
+      <!-- Actions -->
+    <td class="d-flex justify-content-center align-items-center gap-2">
+    
+      <!-- Lancer -->
+      <button (click)="launchFlux(flux.idFlux)"
+              class="btn btn-sm btn-outline-success"
+              title="Lancer le flux">
+        <i class="bi bi-play-fill"></i>
+      </button>
+    
+    </td>
+            
+      </tr>
+      
+    </tbody>
+  </table>
+</div>

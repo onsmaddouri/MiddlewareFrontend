@@ -41,4 +41,45 @@
 .dropdown-menu img {
   border-radius: 4px;
   background: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.logo-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+/* Amélioration du dropdown pour les logos */
+.dropdown-menu {
+  min-width: 200px;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item img {
+  flex-shrink: 0;
+}
+
+/* Style pour le bouton de sélection de logo */
+.btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
 }

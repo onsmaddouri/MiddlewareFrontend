@@ -1,0 +1,113 @@
+<div class="error-management">
+  <!-- Bouton de retour -->
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+      <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+    </button>
+  </div>
+  
+  <div class="page-header">
+    <h1><i class="bi bi-exclamation-triangle-fill"></i> Gestion des Erreurs</h1>
+    <p>Surveiller et résoudre les erreurs du système</p>
+  </div>
+
+  <!-- Formulaire de recherche -->
+  <div class="search-section">
+    <form (ngSubmit)="onSearch()" class="search-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Code Erreur</label>
+          <input type="text" class="form-control" [(ngModel)]="search.code" name="code" placeholder="Rechercher par code...">
+        </div>
+        <div class="form-group">
+          <label>Gravité</label>
+          <select class="form-control" [(ngModel)]="search.severity" name="severity">
+            <option value="">Toutes les gravités</option>
+            <option *ngFor="let severity of severities" [value]="severity">{{ severity }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select class="form-control" [(ngModel)]="search.status" name="status">
+            <option value="">Tous les statuts</option>
+            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" [disabled]="!atLeastOneFilled()">
+            <i class="bi bi-search"></i> Rechercher
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tableau des erreurs -->
+  <div class="table-section">
+    <div *ngIf="loading" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des erreurs...</p>
+    </div>
+    
+    <table *ngIf="!loading" class="table table-bordered table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Code</th>
+          <th>Titre</th>
+          <th>Gravité</th>
+          <th>Statut</th>
+          <th>Date Détection</th>
+          <th>Flux Concerné</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let error of filteredErrors">
+          <td>
+            <strong>{{ error.code }}</strong>
+          </td>
+          <td>{{ error.title }}</td>
+          <td>
+            <span class="badge" [ngClass]="getSeverityClass(error.severity)">
+              {{ error.severity }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getStatusClass(error.status)">
+              {{ error.status }}
+            </span>
+          </td>
+          <td>{{ error.dateDetected | date:'short' }}</td>
+          <td>{{ error.fluxConcerne }}</td>
+          <td>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-info" 
+                      [attr.data-bs-toggle]="'tooltip'" 
+                      [attr.data-bs-placement]="'top'" 
+                      [title]="error.description">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-warning" 
+                      (click)="updateErrorStatus(error, 'IN_PROGRESS')"
+                      [disabled]="error.status === 'IN_PROGRESS'">
+                <i class="bi bi-gear"></i>
+              </button>
+              <button class="btn btn-sm btn-success" 
+                      (click)="updateErrorStatus(error, 'RESOLVED')"
+                      [disabled]="error.status === 'RESOLVED' || error.status === 'CLOSED'">
+                <i class="bi bi-check"></i>
+              </button>
+              <button class="btn btn-sm btn-secondary" 
+                      (click)="updateErrorStatus(error, 'CLOSED')"
+                      [disabled]="error.status === 'CLOSED'">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

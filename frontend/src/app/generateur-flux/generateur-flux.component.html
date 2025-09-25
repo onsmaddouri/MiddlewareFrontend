@@ -1,3 +1,10 @@
+<!-- Bouton de retour -->
+<div class="mb-3">
+  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
+    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+  </button>
+</div>
+
 <form class="d-flex mb-3" (ngSubmit)="onSearch()" style="gap: 16px; align-items: stretch;">
   <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="search.nom" name="nom" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
   <div class="dropdown" style="max-width: 160px;">

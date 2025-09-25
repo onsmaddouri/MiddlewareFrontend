@@ -1,0 +1,329 @@
+.user-monitoring {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header avec contrôles */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  background: linear-gradient(135deg, #046aa1 0%, #003366 100%);
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.header-content h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.header-content p {
+  margin: 8px 0 0 0;
+  opacity: 0.9;
+}
+
+.user-info {
+  margin-top: 10px;
+}
+
+.user-info .badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 0.9rem;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.header-controls .btn {
+  border: 2px solid white;
+  color: white;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.header-controls .btn:hover:not(:disabled) {
+  background: white;
+  color: #046aa1;
+}
+
+.header-controls .btn:disabled {
+  opacity: 0.6;
+}
+
+/* Statistiques utilisateur */
+.user-stats {
+  margin-bottom: 30px;
+}
+
+.user-stats .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.user-stats .stat-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #e6f0ff 0%, #f0f8ff 100%);
+  border-radius: 10px;
+  border-left: 4px solid #046aa1;
+  transition: all 0.3s ease;
+}
+
+.user-stats .stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(4, 106, 161, 0.15);
+}
+
+.user-stats .stat-icon {
+  font-size: 2.2rem;
+  color: #046aa1;
+  margin-right: 15px;
+}
+
+.user-stats .stat-info h3 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #046aa1;
+  margin: 0;
+}
+
+.user-stats .stat-info p {
+  margin: 5px 0 0 0;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Section des flux */
+.fluxes-section {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.fluxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.flux-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+}
+
+.flux-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.flux-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.flux-header h3 {
+  margin: 0;
+  color: #046aa1;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.flux-content {
+  padding: 15px 20px;
+}
+
+.flux-info {
+  margin-bottom: 15px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-row i {
+  color: #046aa1;
+  margin-right: 8px;
+  width: 16px;
+  text-align: center;
+}
+
+.info-row span {
+  color: #333;
+}
+
+/* Barre de progression */
+.progress-section {
+  margin: 15px 0;
+}
+
+.progress-section label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.progress {
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Indicateurs d'état */
+.status-indicators {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.status-indicators .badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+}
+
+/* Actions des flux */
+.flux-actions {
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.flux-actions .btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+
+/* Message quand aucun flux */
+.no-fluxes {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-fluxes-content i {
+  font-size: 4rem;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.no-fluxes-content h4 {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.no-fluxes-content p {
+  color: #999;
+  margin-bottom: 20px;
+}
+
+/* Badges de statut */
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badge-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.badge-success {
+  background: #28a745;
+  color: white;
+}
+
+.badge-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.badge-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.badge-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .header-controls {
+    justify-content: center;
+  }
+  
+  .fluxes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-stats .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .user-stats .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .flux-card {
+    margin: 0 10px;
+  }
+}

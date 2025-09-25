@@ -1,0 +1,168 @@
+<div class="user-monitoring">
+  <div class="page-header">
+    <div class="header-content">
+      <h1><i class="bi bi-eye-fill"></i> Suivi des Flux</h1>
+      <p>Surveiller l'état et la progression de vos flux de données</p>
+      <div class="user-info">
+        <span class="badge badge-info">
+          <i class="bi bi-person-fill"></i> {{ getCurrentUser() }}
+        </span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="btn btn-outline-primary btn-sm" (click)="manualRefresh()" [disabled]="loading">
+        <i *ngIf="!loading" class="bi bi-arrow-clockwise"></i>
+        <i *ngIf="loading" class="bi bi-hourglass-split"></i>
+        {{ loading ? 'Actualisation...' : 'Actualiser' }}
+      </button>
+      <button class="btn btn-sm" 
+              [ngClass]="autoRefresh ? 'btn-success' : 'btn-outline-secondary'"
+              (click)="toggleAutoRefresh()">
+        <i class="bi bi-play-circle" *ngIf="autoRefresh"></i>
+        <i class="bi bi-pause-circle" *ngIf="!autoRefresh"></i>
+        {{ autoRefresh ? 'Auto-actif' : 'Auto-inactif' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques utilisateur -->
+  <div class="user-stats">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-diagram-3-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getFluxCount() }}</h3>
+          <p>Mes Flux</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-play-circle-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getActiveFluxCount() }}</h3>
+          <p>Flux Actifs</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getCompletedFluxCount() }}</h3>
+          <p>Flux Terminés</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getFailedFluxCount() }}</h3>
+          <p>Flux Échoués</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des flux de l'utilisateur -->
+  <div class="fluxes-section">
+    <div *ngIf="loading && userFluxes.length === 0" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement de vos flux...</p>
+    </div>
+
+    <div *ngIf="userFluxes.length === 0 && !loading" class="no-fluxes">
+      <div class="no-fluxes-content">
+        <i class="bi bi-inbox"></i>
+        <h4>Aucun flux trouvé</h4>
+        <p>Vous n'avez pas encore créé ou lancé de flux.</p>
+        <button class="btn btn-primary" routerLink="/user/launch-flux">
+          <i class="bi bi-plus-circle"></i> Lancer un flux
+        </button>
+      </div>
+    </div>
+
+    <div class="fluxes-grid" *ngIf="userFluxes.length > 0">
+      <div class="flux-card" *ngFor="let flux of userFluxes">
+        <div class="flux-header">
+          <h3>{{ flux.nomFlux }}</h3>
+          <span class="badge" [ngClass]="getStatusClass(flux.statut)">
+            {{ getStatusText(flux.statut) }}
+          </span>
+        </div>
+        
+        <div class="flux-content">
+          <div class="flux-info">
+            <div class="info-row">
+              <i class="bi bi-gear-fill"></i>
+              <span><strong>Type:</strong> {{ flux.typeFlux }}</span>
+            </div>
+            <div class="info-row">
+              <i class="bi bi-plug-fill"></i>
+              <span><strong>Connecteur:</strong> {{ flux.connecteur }}</span>
+            </div>
+            <div class="info-row">
+              <i class="bi bi-calendar-event"></i>
+              <span><strong>Créé le:</strong> {{ flux.dateCreation | date:'short' }}</span>
+            </div>
+            <div class="info-row" *ngIf="flux.derniereExecution">
+              <i class="bi bi-clock-history"></i>
+              <span><strong>Dernière exécution:</strong> {{ flux.derniereExecution | date:'short' }}</span>
+            </div>
+            <div class="info-row" *ngIf="flux.modifiedBy">
+              <i class="bi bi-person-gear"></i>
+              <span><strong>Modifié par:</strong> {{ flux.modifiedBy }}</span>
+            </div>
+          </div>
+          
+          <!-- Barre de progression pour les flux en cours -->
+          <div class="progress-section" *ngIf="flux.statut === 'EN_COURS'">
+            <label>Progression</label>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                   [style.width.%]="flux.progression" 
+                   role="progressbar">
+                {{ flux.progression }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Indicateurs d'état -->
+          <div class="status-indicators">
+            <span class="badge badge-secondary" *ngIf="flux.archived">
+              <i class="bi bi-archive-fill"></i> Archivé
+            </span>
+            <span class="badge badge-success" *ngIf="flux.validated">
+              <i class="bi bi-check-circle-fill"></i> Validé
+            </span>
+            <span class="badge badge-warning" *ngIf="flux.cancelled">
+              <i class="bi bi-x-circle-fill"></i> Annulé
+            </span>
+          </div>
+        </div>
+        
+        <div class="flux-actions">
+          <button class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-info-circle"></i> Détails
+          </button>
+          <button class="btn btn-sm btn-outline-success" 
+                  *ngIf="flux.statut === 'EN_ATTENTE'">
+            <i class="bi bi-play"></i> Démarrer
+          </button>
+          <button class="btn btn-sm btn-outline-warning" 
+                  *ngIf="flux.statut === 'EN_COURS'">
+            <i class="bi bi-pause"></i> Pause
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

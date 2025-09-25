@@ -29,4 +29,24 @@ export class UserService {
   getCount(): Observable<number> {
     return this.http.get<number>('http://localhost:8080/api/users/count');
   }
+
+  getAll(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8080/api/users');
+  }
+
+  getById(id: number): Observable<any> {
+    return this.http.get<any>(`http://localhost:8080/api/users/${id}`);
+  }
+
+  create(user: any): Observable<any> {
+    return this.http.post<any>('http://localhost:8080/api/users', user);
+  }
+
+  update(id: number, user: any): Observable<any> {
+    return this.http.put<any>(`http://localhost:8080/api/users/${id}`, user);
+  }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`http://localhost:8080/api/users/${id}`);
+  }
 }

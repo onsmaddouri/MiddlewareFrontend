@@ -6,16 +6,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApplicationOpenSourceService {
-  private apiUrl = 'http://localhost:8080/api/applications';
+  private apiUrl = 'http://localhost:8080/api/applications-open-source';
 
   constructor(private http: HttpClient) {}
 
   add(app: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/add`, app);
+    return this.http.post<any>(`${this.apiUrl}`, app);
   }
 
   getAll(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+    return this.http.get<any[]>(`${this.apiUrl}`);
   }
 
   getById(id: number): Observable<any> {
@@ -23,14 +23,14 @@ export class ApplicationOpenSourceService {
   }
 
   delete(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
   update(id: number, app: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/update/${id}`, app);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, app);
   }
 
   getCount(): Observable<number> {
-    return this.http.get<number>('http://localhost:8080/api/applications/count');
+    return this.http.get<number>(`${this.apiUrl}/count`);
   }
 } 
