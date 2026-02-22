@@ -50,7 +50,6 @@
     <table *ngIf="!loading" class="table table-bordered table-striped table-hover">
       <thead class="thead-dark">
         <tr>
-          <th>ID</th>
           <th>Nom d'utilisateur</th>
           <th>Email</th>
           <th>Rôle Actuel</th>
@@ -65,7 +64,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let user of filteredUsers">
-          <td>{{ user.id }}</td>
           <td>
             <input *ngIf="editingId === user.id" [(ngModel)]="user.username" class="form-control form-control-sm" />
             <span *ngIf="editingId !== user.id">{{ user.username }}</span>

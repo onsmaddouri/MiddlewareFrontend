@@ -12,6 +12,7 @@ declare var bootstrap: any;
 export class GenerateurFluxComponent implements OnInit {
   generateurs: any[] = [];
   filteredGenerateurs: any[] = [];
+  loading: boolean = false;
   editingId: number | null = null;
   editedGenerateur: any = null;
 
@@ -58,9 +59,17 @@ export class GenerateurFluxComponent implements OnInit {
   }
 
   loadGenerateurs() {
-    this.generateurService.getAll().subscribe(data => {
-      this.generateurs = data;
-      this.filteredGenerateurs = data;
+    this.loading = true;
+    this.generateurService.getAll().subscribe({
+      next: (data) => {
+        this.generateurs = data;
+        this.filteredGenerateurs = data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des générateurs:', error);
+        this.loading = false;
+      }
     });
   }
 
@@ -74,9 +83,6 @@ export class GenerateurFluxComponent implements OnInit {
     });
   }
 
-  atLeastOneFilled(): boolean {
-    return Object.values(this.search).some(val => val && val.trim() !== '');
-  }
 
   startEditing(g: any) {
     this.editingId = g.idGenerateur;
@@ -153,5 +159,42 @@ export class GenerateurFluxComponent implements OnInit {
       this.addModal.hide();
     }
     this.newGenerateur = { nom: '', description: '', source: '', destination: '', format: '' };
+  }
+
+  // Méthodes manquantes pour le template
+  resetSearch(): void {
+    this.search = {
+      nom: '',
+      source: '',
+      destination: '',
+      format: ''
+    };
+    this.onSearch();
+  }
+
+  viewGenerateurDetails(generateur: any): void {
+    console.log('Voir détails générateur:', generateur);
+  }
+
+  editGenerateur(generateur: any): void {
+    console.log('Modifier générateur:', generateur);
+  }
+
+  deleteGenerateur(generateur: any): void {
+    console.log('Supprimer générateur:', generateur);
+  }
+
+  // Méthodes pour l'édition inline
+  saveChanges(generateur: any): void {
+    console.log('Sauvegarder les changements:', generateur);
+    this.editingId = null;
+  }
+
+  addGenerateur(): void {
+    console.log('Ajouter un générateur');
+  }
+
+  atLeastOneFilled(): boolean {
+    return !!(this.search.nom || this.search.source || this.search.destination);
   }
 }

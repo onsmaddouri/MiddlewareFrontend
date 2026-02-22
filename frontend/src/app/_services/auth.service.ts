@@ -41,4 +41,20 @@ export class AuthService {
   logout(): void {
     this.storageService.clean(); // <-- Vide le sessionStorage
   }
+
+  forgotPasswordEmail(email: string): Observable<any> {
+    return this.http.post(
+      AUTH_API + 'forgot-password-email',
+      { email },
+      httpOptions
+    );
+  }
+
+  resetPasswordEmail(email: string, code: string, newPassword: string): Observable<any> {
+    return this.http.post(
+      AUTH_API + 'reset-password-email',
+      { email, code, newPassword },
+      httpOptions
+    );
+  }
 }

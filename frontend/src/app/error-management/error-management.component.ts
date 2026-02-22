@@ -10,6 +10,7 @@ export class ErrorManagementComponent implements OnInit {
   errors: any[] = [];
   filteredErrors: any[] = [];
   loading: boolean = false;
+  editingId: number | null = null;
 
   search = {
     code: '',
@@ -61,9 +62,6 @@ export class ErrorManagementComponent implements OnInit {
     });
   }
 
-  atLeastOneFilled(): boolean {
-    return Object.values(this.search).some(val => val && val.trim() !== '');
-  }
 
   updateErrorStatus(error: any, newStatus: string): void {
     this.errorService.updateStatus(error.id, newStatus).subscribe({
@@ -98,5 +96,46 @@ export class ErrorManagementComponent implements OnInit {
       case 'CLOSED': return 'badge-secondary';
       default: return 'badge-secondary';
     }
+  }
+
+  // Méthodes manquantes pour le template
+  resetSearch(): void {
+    this.search = {
+      code: '',
+      severity: '',
+      status: ''
+    };
+    this.onSearch();
+  }
+
+
+  viewErrorDetails(error: any): void {
+    console.log('Voir détails erreur:', error);
+  }
+
+  resolveError(error: any): void {
+    console.log('Résoudre erreur:', error);
+  }
+
+  deleteError(error: any): void {
+    console.log('Supprimer erreur:', error);
+  }
+
+  // Méthodes pour l'édition inline
+  startEditing(id: number): void {
+    this.editingId = id;
+  }
+
+  saveChanges(error: any): void {
+    console.log('Sauvegarder les changements:', error);
+    this.editingId = null;
+  }
+
+  addError(): void {
+    console.log('Ajouter une erreur');
+  }
+
+  atLeastOneFilled(): boolean {
+    return !!(this.search.code || this.search.severity || this.search.status);
   }
 }

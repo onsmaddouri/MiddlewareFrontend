@@ -1,226 +1,134 @@
-<!-- Bouton de retour -->
-<div class="mb-3">
-  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
-    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
-  </button>
-</div>
-
-<form class="d-flex mb-3" (ngSubmit)="onSearch()" style="gap: 16px; align-items: stretch;">
-  <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="search.nom" name="nom" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
-  <div class="dropdown" style="max-width: 160px;">
-    <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-      {{ search.source || 'Source' }}
-    </button>
-    <ul class="dropdown-menu w-100">
-      <li>
-        <a class="dropdown-item" href="#" (click)="search.source = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
-      </li>
-      <li class="dropdown-header">ERP</li>
-      <li *ngFor="let erp of erps">
-        <a class="dropdown-item" href="#" (click)="search.source = erp.nom; onSearch(); $event.preventDefault();">{{ erp.nom }}</a>
-      </li>
-      <li class="dropdown-header">Applications Open Source</li>
-      <li *ngFor="let app of applications">
-        <a class="dropdown-item" href="#" (click)="search.source = app.nom; onSearch(); $event.preventDefault();">{{ app.nom }}</a>
-      </li>
-    </ul>
+<div class="generateur-flux-management">
+  <div class="page-header">
+    <h1><i class="bi bi-gear-wide-connected"></i> Générateurs de Flux</h1>
+    <p>Gérer les générateurs de flux de données</p>
   </div>
-  <div class="dropdown" style="max-width: 160px;">
-    <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-      {{ search.destination || 'Destination' }}
-    </button>
-    <ul class="dropdown-menu w-100">
-      <li>
-        <a class="dropdown-item" href="#" (click)="search.destination = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
-      </li>
-      <li class="dropdown-header">ERP</li>
-      <li *ngFor="let erp of erps">
-        <a class="dropdown-item" href="#" (click)="search.destination = erp.nom; onSearch(); $event.preventDefault();">{{ erp.nom }}</a>
-      </li>
-      <li class="dropdown-header">Applications Open Source</li>
-      <li *ngFor="let app of applications">
-        <a class="dropdown-item" href="#" (click)="search.destination = app.nom; onSearch(); $event.preventDefault();">{{ app.nom }}</a>
-      </li>
-    </ul>
-  </div>
-  <input type="text" class="form-control" placeholder="Format" [(ngModel)]="search.format" name="format" style="max-width: 120px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
-  <button type="submit"
-          class="btn btn-outline-primary"
-          [disabled]="!atLeastOneFilled()"
-          style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
-    <i class="bi bi-search" style="font-size: 1rem;"></i>
-  </button>
-</form>
 
-<div class="table-responsive">
-  <table class="table table-bordered table-striped table-hover text-center">
-    <thead class="thead-light">
-      <tr>
-        <th>Nom</th>
-        <th>Description</th>
-        <th>Source</th>
-        <th>Destination</th>
-        <th>Format</th>
-        <th>Date de création</th>
-        <th class="text-center align-middle" style="vertical-align: middle;">
-          <div class="d-flex justify-content-start align-items-center gap-2">
-            <button class="btn btn-outline-success"
-                    style="width: 50px; height: 50px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
-                    (click)="openAddModal()"
-                    title="Ajouter générateur">
-              <i class="bi bi-plus-lg"></i>
-            </button>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let g of filteredGenerateurs" class="table-row">
-        <td>
-          <ng-container *ngIf="editingId === g.idGenerateur; else nomDisplay">
-            <input type="text" class="form-control" [(ngModel)]="editedGenerateur.nom">
-          </ng-container>
-          <ng-template #nomDisplay>{{ g.nom }}</ng-template>
-        </td>
-        <td>
-          <ng-container *ngIf="editingId === g.idGenerateur; else descDisplay">
-            <input type="text" class="form-control" [(ngModel)]="editedGenerateur.description">
-          </ng-container>
-          <ng-template #descDisplay>{{ g.description }}</ng-template>
-        </td>
-        <td>
-          <ng-container *ngIf="editingId === g.idGenerateur; else sourceDisplay">
-            <input type="text" class="form-control" [(ngModel)]="editedGenerateur.source">
-          </ng-container>
-          <ng-template #sourceDisplay>{{ g.source }}</ng-template>
-        </td>
-        <td>
-          <ng-container *ngIf="editingId === g.idGenerateur; else destDisplay">
-            <input type="text" class="form-control" [(ngModel)]="editedGenerateur.destination">
-          </ng-container>
-          <ng-template #destDisplay>{{ g.destination }}</ng-template>
-        </td>
-        <td>
-          <ng-container *ngIf="editingId === g.idGenerateur; else formatDisplay">
-            <input type="text" class="form-control" [(ngModel)]="editedGenerateur.format">
-          </ng-container>
-          <ng-template #formatDisplay>{{ g.format }}</ng-template>
-        </td>
-        <td>{{ g.dateCreation | date:'short' }}</td>
-        <td class="d-flex justify-content-start align-items-center gap-2">
-          <!-- Bouton Enregistrer : visible uniquement en édition -->
-          <button *ngIf="editingId === g.idGenerateur"
-                  class="btn btn-outline-success"
-                  title="Enregistrer"
-                  (click)="saveEdit()">
-            <i class="bi bi-save"></i>
-          </button>
-
-          <!-- Bouton Modifier : visible uniquement hors édition -->
-          <button *ngIf="editingId !== g.idGenerateur"
-                  class="btn btn-outline-primary"
-                  title="Modifier"
-                  (click)="startEditing(g)">
-            <i class="bi bi-pencil"></i>
-          </button>
-
-          <!-- Bouton Supprimer : toujours visible -->
-          <button class="btn btn-outline-danger"
-                  title="Supprimer"
-                  (click)="openDeleteModal(g)">
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- Modal de confirmation suppression -->
-<div class="modal fade" id="deleteGenerateurModal" tabindex="-1" aria-labelledby="deleteGenerateurModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 340px;">
-    <div class="modal-content shadow rounded-4 border-0" style="background: #fff;">
-      <div class="modal-header py-2" style="background: linear-gradient(135deg, #046aa1 0%, #003366 100%); color: #fff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
-        <i class="bi bi-exclamation-circle-fill fs-4 me-2"></i>
-        <h6 class="modal-title fw-bold" id="deleteGenerateurModalLabel">Voulez-vous supprimer le générateur&nbsp;?</h6>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer" (click)="cancelDelete()"></button>
-      </div>
-      <div class="modal-body text-center py-3">
-        <div class="mb-2 fs-6" style="color: #046aa1;">
-          Le générateur <span class="fw-bold">{{ generateurToDelete?.nom }}</span> sera supprimé.
-        </div>
-      </div>
-      <div class="modal-footer justify-content-center gap-3 border-0 pb-3">
-        <button type="button" class="btn btn-outline-primary rounded-pill px-3" style="min-width: 60px;" (click)="cancelDelete()">Non</button>
-        <button type="button" class="btn btn-primary rounded-pill px-3" style="min-width: 60px;" (click)="confirmDelete()">Oui</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal d'ajout de générateur -->
-<div class="modal fade" id="addGenerateurModal" tabindex="-1" aria-labelledby="addGenerateurModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form class="modal-content" (ngSubmit)="submitAddGenerateur()" #addGenerateurForm="ngForm">
-      <div class="modal-header" style="background: linear-gradient(to bottom, #204d74 0%, #4a77a8 100%); color: #fff;">
-        <h5 class="modal-title" id="addGenerateurModalLabel">Ajouter un générateur</h5>
-        <button type="button"
-                class="btn-close btn-close-white"
-                aria-label="Fermer"
-                (click)="cancelAddGenerateurModal()">
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-2">
+  <!-- Formulaire de recherche -->
+  <div class="search-section">
+    <form (ngSubmit)="onSearch()" class="search-form">
+      <div class="form-row">
+        <div class="form-group">
           <label>Nom</label>
-          <input type="text" class="form-control" [(ngModel)]="newGenerateur.nom" name="nom" required>
+          <input type="text" class="form-control" placeholder="Rechercher par nom..." [(ngModel)]="search.nom" name="nom">
         </div>
-        <div class="mb-2">
-          <label>Description</label>
-          <input type="text" class="form-control" [(ngModel)]="newGenerateur.description" name="description" required>
-        </div>
-        <div class="mb-2">
+        <div class="form-group">
           <label>Source</label>
-          <select class="form-control" [(ngModel)]="newGenerateur.source" name="source" required>
-            <option value="">Sélectionner la source</option>
-            <optgroup label="ERP">
-              <option *ngFor="let erp of erps" [value]="erp.nom">{{ erp.nom }}</option>
-            </optgroup>
-            <optgroup label="Applications Open Source">
-              <option *ngFor="let app of applications" [value]="app.nom">{{ app.nom }}</option>
-            </optgroup>
+          <select class="form-control" [(ngModel)]="search.source" name="source">
+            <option value="">Toutes les sources</option>
+            <option *ngFor="let erp of erps" [value]="erp.nom">{{ erp.nom }}</option>
+            <option *ngFor="let app of applications" [value]="app.nom">{{ app.nom }}</option>
           </select>
         </div>
-        <div class="mb-2">
+        <div class="form-group">
           <label>Destination</label>
-          <select class="form-control" [(ngModel)]="newGenerateur.destination" name="destination" required>
-            <option value="">Sélectionner la destination</option>
-            <optgroup label="ERP">
-              <option *ngFor="let erp of erps" [value]="erp.nom">{{ erp.nom }}</option>
-            </optgroup>
-            <optgroup label="Applications Open Source">
-              <option *ngFor="let app of applications" [value]="app.nom">{{ app.nom }}</option>
-            </optgroup>
+          <select class="form-control" [(ngModel)]="search.destination" name="destination">
+            <option value="">Toutes les destinations</option>
+            <option *ngFor="let erp of erps" [value]="erp.nom">{{ erp.nom }}</option>
+            <option *ngFor="let app of applications" [value]="app.nom">{{ app.nom }}</option>
           </select>
         </div>
-        <div class="mb-2">
-          <label>Format</label>
-          <input type="text" class="form-control" [(ngModel)]="newGenerateur.format" name="format" required>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" [disabled]="!atLeastOneFilled()">
+            <i class="bi bi-search"></i> Rechercher
+          </button>
         </div>
-      </div>
-      <div class="modal-footer flex-column">
-        <button type="submit"
-                class="btn w-100 mb-2"
-                style="background: linear-gradient(to bottom, #204d74 0%, #4a77a8 100%); color: #fff; border: none;">
-          Ajouter
-        </button>
-        <button type="button"
-                class="btn w-100"
-                (click)="cancelAddGenerateurModal()"
-                style="background: #eaf0fa; color: #204d74; border: none;">
-          Annuler
-        </button>
+        <div class="form-group">
+          <button type="button" class="btn btn-outline-secondary" (click)="resetSearch()">
+            <i class="bi bi-arrow-clockwise"></i> Actualiser
+          </button>
+        </div>
       </div>
     </form>
+  </div>
+
+  <!-- Tableau des générateurs -->
+  <div class="table-section">
+    <div *ngIf="loading" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des générateurs...</p>
+    </div>
+    
+    <table *ngIf="!loading" class="table table-bordered table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Nom</th>
+          <th>Source</th>
+          <th>Destination</th>
+          <th>Type</th>
+          <th>Actif</th>
+          <th class="text-center">
+            <button class="btn btn-sm btn-outline-success" 
+                    (click)="addGenerateur()"
+                    title="Ajouter un générateur">
+              <i class="bi bi-plus"></i>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let generateur of filteredGenerateurs">
+          <td>
+            <input *ngIf="editingId === generateur.id" [(ngModel)]="generateur.nom" class="form-control form-control-sm" />
+            <span *ngIf="editingId !== generateur.id">{{ generateur.nom }}</span>
+          </td>
+          <td>
+            <input *ngIf="editingId === generateur.id" [(ngModel)]="generateur.source" class="form-control form-control-sm" />
+            <span *ngIf="editingId !== generateur.id">{{ generateur.source }}</span>
+          </td>
+          <td>
+            <input *ngIf="editingId === generateur.id" [(ngModel)]="generateur.destination" class="form-control form-control-sm" />
+            <span *ngIf="editingId !== generateur.id">{{ generateur.destination }}</span>
+          </td>
+          <td>
+            <input *ngIf="editingId === generateur.id" [(ngModel)]="generateur.type" class="form-control form-control-sm" />
+            <span *ngIf="editingId !== generateur.id">{{ generateur.type }}</span>
+          </td>
+          <td>
+            <span *ngIf="editingId !== generateur.id" class="badge" [ngClass]="generateur.actif ? 'badge-success' : 'badge-secondary'">
+              {{ generateur.actif ? 'Actif' : 'Inactif' }}
+            </span>
+            <select *ngIf="editingId === generateur.id" [(ngModel)]="generateur.actif" class="form-control form-control-sm">
+              <option [value]="true">Actif</option>
+              <option [value]="false">Inactif</option>
+            </select>
+          </td>
+          <td>
+            <div class="d-flex justify-content-center gap-2">
+              <!-- Modifier -->
+              <button *ngIf="editingId !== generateur.id"
+                      (click)="startEditing(generateur.id)"
+                      class="btn btn-sm btn-outline-primary"
+                      title="Modifier">
+                <i class="bi bi-pencil"></i>
+              </button>
+              
+              <!-- Enregistrer -->
+              <button *ngIf="editingId === generateur.id"
+                      (click)="saveChanges(generateur)"
+                      class="btn btn-sm btn-outline-success"
+                      title="Enregistrer">
+                <i class="bi bi-save"></i>
+              </button>
+              
+              <!-- Supprimer -->
+              <button class="btn btn-sm btn-outline-danger"
+                      title="Supprimer"
+                      (click)="deleteGenerateur(generateur)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Message si aucun générateur -->
+    <div *ngIf="!loading && filteredGenerateurs.length === 0" class="alert alert-warning text-center">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      Aucun générateur trouvé.
+    </div>
   </div>
 </div>

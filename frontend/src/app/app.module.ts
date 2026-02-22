@@ -30,6 +30,13 @@ import { UserMonitoringComponent } from './user-monitoring/user-monitoring.compo
 import { FluxLauncherComponent } from './flux-launcher/flux-launcher.component';
 import { ApplicationOpenSourceModulesComponent } from './application-open-source-modules/application-open-source-modules.component';
 import { ERPModulesComponent } from './erp-modules/erp-modules.component';
+import { ForgotPasswordEmailComponent } from './forgot-password-email/forgot-password-email.component';
+import { ResetPasswordEmailComponent } from './reset-password-email/reset-password-email.component';
+import { UserErpModulesComponent } from './user-erp-modules/user-erp-modules.component';
+import { UserAppModulesComponent } from './user-app-modules/user-app-modules.component';
+import { UserErpComponent } from './user-erp/user-erp.component';
+import { UserApplicationsComponent } from './user-applications/user-applications.component';
+import { FluxMonitorComponent } from './flux-monitor/flux-monitor.component';
 
 @NgModule({
   declarations: [
@@ -54,8 +61,15 @@ import { ERPModulesComponent } from './erp-modules/erp-modules.component';
     UserReportsComponent,
     UserMonitoringComponent,
     FluxLauncherComponent,
-        ApplicationOpenSourceModulesComponent,
-        ERPModulesComponent
+    ApplicationOpenSourceModulesComponent,
+    ERPModulesComponent,
+    ForgotPasswordEmailComponent,
+    ResetPasswordEmailComponent,
+    UserErpModulesComponent,
+    UserAppModulesComponent,
+    UserErpComponent,
+    UserApplicationsComponent,
+    FluxMonitorComponent
   ],
   imports: [
     BrowserModule,

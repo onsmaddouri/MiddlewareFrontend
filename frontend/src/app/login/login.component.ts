@@ -66,4 +66,10 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/home']);
     }
   }
+
+  onForgotPassword(event: Event): void {
+    event.preventDefault();
+    // Rediriger vers la page de réinitialisation par email
+    this.router.navigate(['/forgot-password-email']);
+  }
 }

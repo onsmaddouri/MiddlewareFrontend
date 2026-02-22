@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ERPModuleService {
-  private apiUrl = `${environment.apiUrl}/api/modules-erp`;
+  private apiUrl = 'http://localhost:8080/api/modules-erp';
 
   constructor(private http: HttpClient) {}
 

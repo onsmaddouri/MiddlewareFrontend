@@ -1,92 +1,147 @@
 <!-- Bouton de retour -->
-<div class="mb-3">
-  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
-    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
-  </button>
+    <div class="mb-3">
+      <button class="btn btn-back-dashboard" routerLink="/admin/dashboard" title="Retour au Dashboard">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+    </div>
+
+<!-- Bannière Gestion des Flux -->
+<div class="banner-container mb-4">
+  <div class="banner-content">
+    <div class="banner-icon">
+      <i class="bi bi-diagram-3"></i>
+    </div>
+    <div class="banner-text">
+      <h2 class="banner-title">Gestion des Flux</h2>
+      <p class="banner-subtitle">Gérer les flux d'intégration de données</p>
+    </div>
+  </div>
 </div>
 
+<!-- Section de recherche -->
+<div class="search-section">
+  <form class="search-form" (ngSubmit)="onSearch()" #searchForm="ngForm">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nomFlux">Nom du flux</label>
+        <input type="text" id="nomFlux" class="form-control" placeholder="Nom du flux" [(ngModel)]="search.nomFlux" name="nomFlux">
+      </div>
+      
+      <div class="form-group">
+        <label for="statut">Statut</label>
+        <div class="dropdown">
+          <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ search.statut || 'Statut' }}
+          </button>
+          <ul class="dropdown-menu w-100">
+            <li>
+              <a class="dropdown-item" href="#" (click)="search.statut = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
+            </li>
+            <li *ngFor="let s of ['EN_ATTENTE', 'EN_COURS', 'TERMINE', 'ECHEC']">
+              <a class="dropdown-item" href="#" (click)="search.statut = s; onSearch(); $event.preventDefault();">{{ s }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="dateCreation">Date de création</label>
+        <input type="date" id="dateCreation" class="form-control" [(ngModel)]="search.dateCreation" name="dateCreation">
+      </div>
+      
+      <div class="form-group">
+        <label for="source">Source</label>
+        <div class="dropdown">
+          <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-arrow-up-circle me-1"></i>{{ search.source || 'Source' }}
+          </button>
+          <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
+            <li>
+              <a class="dropdown-item" href="#" (click)="search.source = ''; onSearch(); $event.preventDefault();">
+                <i class="bi bi-x-circle me-2 text-muted"></i>Aucun filtre
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li *ngFor="let module of allModules">
+              <a class="dropdown-item" href="#" (click)="search.source = module.nom; onSearch(); $event.preventDefault();">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-gear-fill me-2" [ngClass]="getModuleTypeClass(module)"></i>
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{ module.nom }}</div>
+                    <small class="text-muted">{{ getModuleTypeLabel(module) }}</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="destination">Destination</label>
+        <div class="dropdown">
+          <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-arrow-down-circle me-1"></i>{{ search.destination || 'Destination' }}
+          </button>
+          <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
+            <li>
+              <a class="dropdown-item" href="#" (click)="search.destination = ''; onSearch(); $event.preventDefault();">
+                <i class="bi bi-x-circle me-2 text-muted"></i>Aucun filtre
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li *ngFor="let module of allModules">
+              <a class="dropdown-item" href="#" (click)="search.destination = module.nom; onSearch(); $event.preventDefault();">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-gear-fill me-2" [ngClass]="getModuleTypeClass(module)"></i>
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{ module.nom }}</div>
+                    <small class="text-muted">{{ getModuleTypeLabel(module) }}</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary" [disabled]="!atLeastOneFilled()" title="Rechercher">
+          <i class="bi bi-search"></i>
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="resetFilters()" title="Actualiser">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Barre d'actions en lot -->
+<div class="batch-actions-bar mb-3" *ngIf="selectedFluxes.length > 0">
+  <div class="alert alert-info d-flex align-items-center justify-content-between">
+    <span>
+      <i class="bi bi-check-square me-2"></i>
+      {{ selectedFluxes.length }} flux(s) sélectionné(s)
+    </span>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-success" (click)="executeBatchAction('validate')" title="Valider">
+        <i class="bi bi-check-circle"></i> Valider
+      </button>
+      <button class="btn btn-sm btn-warning" (click)="executeBatchAction('cancel')" title="Annuler">
+        <i class="bi bi-x-circle"></i> Annuler
+      </button>
+      <button class="btn btn-sm btn-secondary" (click)="executeBatchAction('archive')" title="Archiver">
+        <i class="bi bi-archive"></i> Archiver
+      </button>
+      <button class="btn btn-sm btn-outline-secondary" (click)="selectedFluxes = []" title="Désélectionner">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
 <div class="table-responsive">
-  <form class="d-flex mb-3" (ngSubmit)="onSearch()" #searchForm="ngForm" style="gap: 12px; align-items: stretch;">
-    <input type="text" class="form-control" placeholder="Nom du flux" [(ngModel)]="search.nomFlux" name="nomFlux" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
-    <!-- Dropdown Statut -->
-    <div class="dropdown" style="max-width: 140px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
-      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-        {{ search.statut || 'Statut' }}
-      </button>
-      <ul class="dropdown-menu w-100">
-        <li>
-          <a class="dropdown-item" href="#" (click)="search.statut = ''; onSearch(); $event.preventDefault();">Aucun filtre</a>
-        </li>
-        <li *ngFor="let s of ['EN_ATTENTE', 'EN_COURS', 'TERMINE', 'ECHEC']">
-          <a class="dropdown-item" href="#" (click)="search.statut = s; onSearch(); $event.preventDefault();">{{ s }}</a>
-        </li>
-      </ul>
-    </div>
-    <input type="date" class="form-control" [(ngModel)]="search.dateCreation" name="dateCreation" style="max-width: 140px; height: 32px; font-size: 0.95rem; padding: 0 8px;">
-    <!-- Dropdown Source -->
-    <div class="dropdown" style="max-width: 200px; align-self: flex-start; margin-top: -4px; margin-left: -8px;">
-      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-        <i class="bi bi-arrow-up-circle me-1"></i>{{ search.source || 'Source' }}
-      </button>
-      <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
-        <li>
-          <a class="dropdown-item" href="#" (click)="search.source = ''; onSearch(); $event.preventDefault();">
-            <i class="bi bi-x-circle me-2 text-muted"></i>Aucun filtre
-          </a>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li *ngFor="let module of allModules">
-          <a class="dropdown-item" href="#" (click)="search.source = module.nom; onSearch(); $event.preventDefault();">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-gear-fill me-2" [ngClass]="getModuleTypeClass(module)"></i>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">{{ module.nom }}</div>
-                <small class="text-muted">{{ getModuleTypeLabel(module) }}</small>
-              </div>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <!-- Dropdown Destination -->
-    <div class="dropdown" style="max-width: 200px; align-self: flex-start; margin-top: -4px;">
-      <button class="form-control btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 32px; font-size: 0.95rem; padding: 0 8px;">
-        <i class="bi bi-arrow-down-circle me-1"></i>{{ search.destination || 'Destination' }}
-      </button>
-      <ul class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;">
-        <li>
-          <a class="dropdown-item" href="#" (click)="search.destination = ''; onSearch(); $event.preventDefault();">
-            <i class="bi bi-x-circle me-2 text-muted"></i>Aucun filtre
-          </a>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li *ngFor="let module of allModules">
-          <a class="dropdown-item" href="#" (click)="search.destination = module.nom; onSearch(); $event.preventDefault();">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-gear-fill me-2" [ngClass]="getModuleTypeClass(module)"></i>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">{{ module.nom }}</div>
-                <small class="text-muted">{{ getModuleTypeLabel(module) }}</small>
-              </div>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <button type="submit"
-            class="btn btn-outline-primary"
-            [disabled]="!atLeastOneFilled()"
-            style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
-      <i class="bi bi-search" style="font-size: 1rem;"></i>
-    </button>
-    <button type="button"
-            class="btn btn-outline-secondary"
-            (click)="resetFilters()"
-            style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 2px; font-size: 1rem;">
-      <i class="bi bi-arrow-clockwise" style="font-size: 1rem;"></i>
-    </button>
-  </form>
 
   <div class="table-responsive">
     <table class="table table-bordered table-striped table-hover text-center">
@@ -102,23 +157,34 @@
         <th>Modifié par</th>
         <th>Source</th>
         <th>Destination</th>
+        <th>Config</th>
         <th class="text-center align-middle" style="vertical-align: middle;">
-          <div style="display: flex; justify-content: flex-start; align-items: center; gap: 12px;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: nowrap;">
             <button class="btn btn-outline-success btn-sm"
-                    style="width: 48px; height: 48px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    style="width: 35px; height: 35px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
                     (click)="onAddFlux()"
                     title="Ajouter flux">
               <i class="bi bi-plus-lg"></i>
             </button>
-            <!-- Place réservée pour un futur bouton -->
-            <span style="width: 40px; height: 40px; display: inline-block;"></span>
+            <button class="btn btn-outline-info btn-sm"
+                    style="width: 35px; height: 35px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    (click)="loadFluxStatistics()"
+                    title="Statistiques">
+              <i class="bi bi-bar-chart"></i>
+            </button>
+            <button class="btn btn-outline-warning btn-sm"
+                    style="width: 35px; height: 35px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
+                    (click)="checkSystemHealth()"
+                    title="Santé système">
+              <i class="bi bi-heart-pulse"></i>
+            </button>
           </div>
         </th>
       </tr>
     </thead>
     
     <tbody>
-      <tr *ngFor="let flux of filteredFluxList">
+      <tr *ngFor="let flux of filteredFluxList" [class.table-warning]="selectedFluxes.includes(flux.idFlux)">
     
         <!-- nomFlux modifiable -->
         <td>
@@ -135,11 +201,15 @@
         <td>{{ flux.dateCreation | date:'shortDate' }}</td>
     
         <td>
-          <span *ngIf="flux.statut === 'EN_ATTENTE'" class="badge badge-warning badge-status">EN_ATTENTE</span>
-          <span *ngIf="flux.statut === 'ECHEC'" class="badge badge-danger badge-status">ECHEC</span>
-          <span *ngIf="flux.statut === 'EN_COURS'" class="badge badge-info badge-status">EN_COURS</span>
-          <span *ngIf="flux.statut === 'TERMINE'" class="badge badge-termine badge-status">TERMINE</span>
-          <span *ngIf="flux.statut === 'ARCHIVE'" class="badge badge-secondary badge-status">ARCHIVE</span>
+          <span *ngIf="flux.statut === 'EN_ATTENTE'" class="badge badge-warning badge-status">ATTENTE</span>
+          <span *ngIf="flux.statut === 'EN_COURS'" class="badge badge-info badge-status">EN COURS</span>
+          <span *ngIf="flux.statut === 'SUCCES'" class="badge badge-success badge-status" style="font-size: 0.7em;">SUCCES</span>
+          <span *ngIf="flux.statut === 'ERREUR'" class="badge badge-danger badge-status" style="font-size: 0.7em;">ERREUR</span>
+          <span *ngIf="flux.statut === 'ACTIF'" class="badge badge-primary badge-status">ACTIF</span>
+          <span *ngIf="flux.statut === 'ANNULE'" class="badge badge-secondary badge-status">ANNULÉ</span>
+          <span *ngIf="flux.statut === 'ECHEC'" class="badge badge-danger badge-status">ÉCHEC</span>
+          <span *ngIf="flux.statut === 'TERMINE'" class="badge badge-termine badge-status">TERMINÉ</span>
+          <span *ngIf="flux.statut === 'ARCHIVE'" class="badge badge-secondary badge-status">ARCHIVÉ</span>
         </td>
     
         <!-- Archivé -->
@@ -198,9 +268,26 @@
             </div>
           </div>
         </td>
+        
+        <!-- Colonne Transformation Config -->
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-info" 
+                  (click)="showTransformationConfig(flux)"
+                  title="Voir configuration"
+                  style="padding: 3px 8px; font-size: 0.9em;">
+            <i class="bi bi-eye"></i>
+          </button>
+        </td>
     
       <!-- Actions -->
-    <td class="d-flex justify-content-center align-items-center gap-2">
+    <td class="d-flex justify-content-center align-items-center gap-1 flex-wrap">
+      
+      <!-- Sélection pour actions en lot -->
+      <input type="checkbox" 
+             class="form-check-input me-1" 
+             [checked]="selectedFluxes.includes(flux.idFlux)"
+             (change)="toggleFluxSelection(flux.idFlux)"
+             title="Sélectionner pour action en lot">
     
       <!-- Modifier -->
       <button *ngIf="editingId !== flux.idFlux"
@@ -218,6 +305,20 @@
         <i class="bi bi-save"></i>
       </button>
 
+      <!-- Actions dynamiques selon le statut -->
+      <button *ngIf="getAvailableActions(flux).includes('execute')"
+              (click)="executeFlux(flux)"
+              class="btn btn-sm btn-outline-info"
+              title="Exécuter">
+        <i class="bi bi-play-circle"></i>
+      </button>
+
+      <button *ngIf="getAvailableActions(flux).includes('test')"
+              (click)="testFluxConnection(flux)"
+              class="btn btn-sm btn-outline-secondary"
+              title="Tester connexion">
+        <i class="bi bi-wifi"></i>
+      </button>
     
       <!-- Bouton supprimer qui ouvre la modal -->
       <button class="btn btn-sm btn-outline-danger"
@@ -276,6 +377,17 @@
         <div class="mb-2">
           <label>Type</label>
           <input type="text" class="form-control" [(ngModel)]="newFlux.typeFlux" name="typeFlux" required>
+        </div>
+        
+        <div class="mb-2">
+          <label>Description</label>
+          <textarea class="form-control" 
+                    [(ngModel)]="newFlux.description" 
+                    name="description" 
+                    rows="3" 
+                    maxlength="1000"
+                    placeholder="Description détaillée du flux de synchronisation..."></textarea>
+          <small class="text-muted">{{ newFlux.description?.length || 0 }}/1000 caractères</small>
         </div>
         <!-- Source -->
         <div class="mb-3">
@@ -364,12 +476,25 @@
             </div>
           </div>
         </div>
-        <div class="mb-2">
-          <label>Générateur</label>
-          <select class="form-control" [(ngModel)]="newFlux.generateurFlux" name="generateurFlux" required>
-            <option *ngFor="let g of generateurs" [ngValue]="g">{{ g.nom }}</option>
-          </select>
+        
+        <!-- Configuration de Transformation -->
+        <div class="mb-3">
+          <h6 class="text-info"><i class="bi bi-gear"></i> Configuration de Transformation</h6>
+          <label>Configuration JSON <span class="text-muted">(optionnel)</span></label>
+          <textarea class="form-control font-monospace" 
+                    [(ngModel)]="newFlux.transformationConfig" 
+                    name="transformationConfig" 
+                    rows="6" 
+                    placeholder='{"mapping": {"source_field": "destination_field"}, "transformation_rules": []}'
+                    style="font-size: 0.85em;"></textarea>
+          <small class="text-muted d-block mt-1">
+            Format JSON pour mapper et transformer les données entre source et destination
+          </small>
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" (click)="addDefaultTransformationConfig()">
+            <i class="bi bi-file-earmark-code"></i> Utiliser template par défaut
+          </button>
         </div>
+        
         <div class="mb-2">
           <label>Date de création</label>
           <input type="text" class="form-control" [value]="today | date:'yyyy-MM-dd'" disabled>
@@ -518,4 +643,244 @@
     </div>
   </div>
 </div>
-  
+
+<!-- Modal pour afficher/modifier la Transformation Config -->
+<div class="modal fade" id="transformationConfigModal" tabindex="-1" aria-labelledby="transformationConfigModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <div class="modal-header" style="background: linear-gradient(to bottom right, #17a2b8, #138496); color: white; border-radius: 15px 15px 0 0; border: none;">
+        <h5 class="modal-title" id="transformationConfigModalLabel">
+          <i class="bi bi-gear-fill me-2"></i>Configuration de Transformation
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeTransformationConfigModal()" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body" style="padding: 2rem;" *ngIf="selectedFluxForConfig">
+        <!-- En-tête du flux -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center">
+                <div class="me-3" style="background: #17a2b8; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="bi bi-arrow-left-right" style="font-size: 1.5rem; color: white;"></i>
+                </div>
+                <div>
+                  <h4 class="mb-0" style="color: #003366;">{{ selectedFluxForConfig.nomFlux }}</h4>
+                  <p class="mb-0 text-muted">ID: {{ selectedFluxForConfig.idFlux }}</p>
+                </div>
+              </div>
+              <button type="button" 
+                      class="btn btn-sm"
+                      [ngClass]="isEditingConfig ? 'btn-secondary' : 'btn-primary'"
+                      (click)="toggleEditConfig()">
+                <i class="bi" [ngClass]="isEditingConfig ? 'bi-eye' : 'bi-pencil'"></i>
+                {{ isEditingConfig ? 'Annuler' : 'Modifier' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuration de Transformation en mode lecture -->
+        <div class="row mb-3" *ngIf="selectedFluxForConfig.transformationConfig && !isEditingConfig">
+          <div class="col-12">
+            <div class="card border-info">
+              <div class="card-header bg-info text-white">
+                <i class="bi bi-code-square me-2"></i>Configuration JSON
+              </div>
+              <div class="card-body p-0">
+                <pre class="config-json m-0" style="max-height: 400px; overflow-y: auto;">{{ formatJson(selectedFluxForConfig.transformationConfig) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuration de Transformation en mode édition -->
+        <div class="row mb-3" *ngIf="isEditingConfig">
+          <div class="col-12">
+            <div class="card border-warning">
+              <div class="card-header bg-warning text-dark">
+                <i class="bi bi-pencil-square me-2"></i>Modifier la Configuration JSON
+              </div>
+              <div class="card-body">
+                <textarea class="form-control font-monospace" 
+                          [(ngModel)]="editedTransformationConfig" 
+                          rows="12" 
+                          style="font-size: 0.85em;"></textarea>
+                <small class="text-muted d-block mt-2">
+                  <i class="bi bi-info-circle me-1"></i>Assurez-vous que le JSON est valide avant de sauvegarder
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message si pas de configuration -->
+        <div class="row mb-3" *ngIf="(!selectedFluxForConfig.transformationConfig || selectedFluxForConfig.transformationConfig === '') && !isEditingConfig">
+          <div class="col-12">
+            <div class="alert alert-info" role="alert">
+              <i class="bi bi-info-circle me-2"></i>
+              Aucune configuration de transformation définie pour ce flux.
+              <button type="button" 
+                      class="btn btn-sm btn-primary mt-2"
+                      (click)="toggleEditConfig()">
+                <i class="bi bi-plus-circle me-1"></i>Ajouter une configuration
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer" style="border: none; padding: 1.5rem 2rem;">
+        <button type="button" 
+                class="btn w-100" 
+                *ngIf="!isEditingConfig"
+                (click)="closeTransformationConfigModal()"
+                style="background: linear-gradient(to bottom, #17a2b8 0%, #138496 100%); color: white; border: none; border-radius: 10px; padding: 12px; font-weight: 500;">
+          <i class="bi bi-x-circle me-2"></i>Fermer
+        </button>
+        <div class="d-flex gap-2 w-100" *ngIf="isEditingConfig">
+          <button type="button" 
+                  class="btn btn-secondary flex-fill"
+                  (click)="cancelEditConfig()">
+            <i class="bi bi-x-circle me-2"></i>Annuler
+          </button>
+          <button type="button" 
+                  class="btn btn-success flex-fill"
+                  (click)="saveTransformationConfig()">
+            <i class="bi bi-check-circle me-2"></i>Sauvegarder
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal des statistiques -->
+<div class="modal fade" id="statisticsModal" tabindex="-1" aria-labelledby="statisticsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(to bottom right, #003366, #4a77a8); color: white;">
+        <h5 class="modal-title" id="statisticsModalLabel">
+          <i class="bi bi-bar-chart me-2"></i>Statistiques des Flux
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="fluxStats">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card text-center mb-3">
+              <div class="card-body">
+                <h5 class="card-title text-primary">{{ fluxStats.total || 0 }}</h5>
+                <p class="card-text">Total des flux</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card text-center mb-3">
+              <div class="card-body">
+                <h5 class="card-title text-warning">{{ fluxStats.enAttente || 0 }}</h5>
+                <p class="card-text">En attente</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card text-center mb-3">
+              <div class="card-body">
+                <h5 class="card-title text-info">{{ fluxStats.enCours || 0 }}</h5>
+                <p class="card-text">En cours</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card text-center mb-3">
+              <div class="card-body">
+                <h5 class="card-title text-success">{{ fluxStats.succes || 0 }}</h5>
+                <p class="card-text">Succès</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card text-center mb-3">
+              <div class="card-body">
+                <h5 class="card-title text-danger">{{ fluxStats.erreur || 0 }}</h5>
+                <p class="card-text">Erreurs</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card text-center mb-3">
+              <div class="card-body">
+                <h5 class="card-title text-secondary">{{ fluxStats.annule || 0 }}</h5>
+                <p class="card-text">Annulés</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'état du système -->
+<div class="modal fade" id="healthModal" tabindex="-1" aria-labelledby="healthModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" [ngClass]="systemHealth?.healthy ? 'bg-primary' : 'bg-warning'" style="background: #046aa1 !important; color: white;">
+        <h5 class="modal-title" id="healthModalLabel">
+          <i class="bi bi-heart-pulse me-2"></i>État du Système
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="systemHealth">
+        <div class="alert" [ngClass]="systemHealth.healthy ? 'alert-primary' : 'alert-warning'" [style]="systemHealth.healthy ? 'background-color: #e6f0ff; border-color: #046aa1; color: #046aa1;' : ''">
+          <h6 class="alert-heading">
+            <i class="bi bi-shield-check me-2" *ngIf="systemHealth.healthy"></i>
+            <i class="bi bi-exclamation-triangle me-2" *ngIf="!systemHealth.healthy"></i>
+            {{ systemHealth.healthy ? 'Système en bon état' : 'Problèmes détectés' }}
+          </h6>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">Métriques</h6>
+                <ul class="list-unstyled">
+                  <li><strong>Flux en cours:</strong> {{ systemHealth.runningFluxCount || 0 }}</li>
+                  <li><strong>Notifications non lues:</strong> {{ systemHealth.unreadNotificationsCount || 0 }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">Dernière vérification</h6>
+                <p>{{ systemHealth.lastCheck | date:'dd/MM/yyyy à HH:mm:ss' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="systemHealth.issues && systemHealth.issues.length > 0" class="mt-3">
+          <h6 class="text-warning">Problèmes détectés:</h6>
+          <ul class="list-group">
+            <li class="list-group-item list-group-item-warning" *ngFor="let issue of systemHealth.issues">
+              <i class="bi bi-exclamation-circle me-2"></i>{{ issue }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="checkSystemHealth()">
+          <i class="bi bi-arrow-clockwise me-2"></i>Actualiser
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+   

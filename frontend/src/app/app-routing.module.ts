@@ -21,16 +21,29 @@ import { UserMonitoringComponent } from './user-monitoring/user-monitoring.compo
 import { FluxLauncherComponent } from './flux-launcher/flux-launcher.component';
 import { ApplicationOpenSourceModulesComponent } from './application-open-source-modules/application-open-source-modules.component';
 import { ERPModulesComponent } from './erp-modules/erp-modules.component';
+import { ForgotPasswordEmailComponent } from './forgot-password-email/forgot-password-email.component';
+import { ResetPasswordEmailComponent } from './reset-password-email/reset-password-email.component';
+import { UserErpModulesComponent } from './user-erp-modules/user-erp-modules.component';
+import { UserAppModulesComponent } from './user-app-modules/user-app-modules.component';
+import { UserErpComponent } from './user-erp/user-erp.component';
+import { UserApplicationsComponent } from './user-applications/user-applications.component';
+import { FluxMonitorComponent } from './flux-monitor/flux-monitor.component';
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'forgot-password-email', component: ForgotPasswordEmailComponent },
+  { path: 'reset-password-email', component: ResetPasswordEmailComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'user', component: BoardUserComponent },
   { path: 'user/flux', component: GFluxComponent },
   { path: 'user/launch-flux', component: FluxLauncherComponent },
   { path: 'user/reports', component: UserReportsComponent },
   { path: 'user/monitoring', component: UserMonitoringComponent },
+  { path: 'user/erp-modules', component: UserErpModulesComponent },
+  { path: 'user/app-modules', component: UserAppModulesComponent },
+  { path: 'user/erp', component: UserErpComponent },
+  { path: 'user/applications', component: UserApplicationsComponent },
   {
     path: 'admin',
     component: AdminLayoutComponent,
@@ -46,6 +59,7 @@ const routes: Routes = [
       { path: 'users', component: UserManagementComponent },
       { path: 'logs', component: LogsComponent },
       { path: 'errors', component: ErrorManagementComponent },
+      { path: 'flux-monitor', component: FluxMonitorComponent },
 
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

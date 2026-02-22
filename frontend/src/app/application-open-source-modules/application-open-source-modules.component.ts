@@ -12,6 +12,7 @@ declare var bootstrap: any;
 export class ApplicationOpenSourceModulesComponent implements OnInit {
   modules: any[] = [];
   filteredModules: any[] = [];
+  loading: boolean = false;
   editingId: number | null = null;
   editedModule: any = null;
 
@@ -58,15 +59,18 @@ export class ApplicationOpenSourceModulesComponent implements OnInit {
   }
 
   loadModules() {
+    this.loading = true;
     console.log('Chargement des modules d\'applications open source...');
     this.moduleService.getAll().subscribe({
       next: (data) => {
         console.log('Modules reçus:', data);
         this.modules = data;
         this.filteredModules = [...this.modules];
+        this.loading = false;
       },
       error: (error) => {
         console.error('Erreur lors du chargement des modules:', error);
+        this.loading = false;
       }
     });
   }
@@ -92,6 +96,11 @@ export class ApplicationOpenSourceModulesComponent implements OnInit {
     if (addModalElement) {
       this.addModal = new bootstrap.Modal(addModalElement);
     }
+    
+    const configModalElement = document.getElementById('configDetailModal');
+    if (configModalElement) {
+      this.configModal = new bootstrap.Modal(configModalElement);
+    }
   }
 
   onSearch() {
@@ -102,10 +111,6 @@ export class ApplicationOpenSourceModulesComponent implements OnInit {
       
       return matchNom && matchType && matchActif;
     });
-  }
-
-  atLeastOneFilled(): boolean {
-    return !!(this.search.nom || this.search.typeModule || this.search.actif);
   }
 
   startEditing(module: any) {
@@ -753,5 +758,38 @@ export class ApplicationOpenSourceModulesComponent implements OnInit {
     } catch {
       return jsonString;
     }
+  }
+
+  // Méthodes manquantes pour le template
+  resetSearch(): void {
+    this.search = {
+      nom: '',
+      typeModule: '',
+      actif: ''
+    };
+    this.onSearch();
+  }
+
+
+  viewModule(module: any): void {
+    console.log('Voir module:', module);
+  }
+
+  editModule(module: any): void {
+    console.log('Modifier module:', module);
+  }
+
+  deleteModule(module: any): void {
+    console.log('Supprimer module:', module);
+  }
+
+  // Méthodes pour l'édition inline
+  saveChanges(module: any): void {
+    console.log('Sauvegarder les changements:', module);
+    this.editingId = null;
+  }
+
+  atLeastOneFilled(): boolean {
+    return !!(this.search.nom || this.search.typeModule || this.search.actif);
   }
 }

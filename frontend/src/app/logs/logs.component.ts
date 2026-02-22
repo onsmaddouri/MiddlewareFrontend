@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LogService } from '../_services/log.service';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-logs',
   templateUrl: './logs.component.html',
@@ -10,6 +12,8 @@ export class LogsComponent implements OnInit {
   logs: any[] = [];
   filteredLogs: any[] = [];
   loading: boolean = false;
+  selectedLog: any = null;
+  logDetailsModal: any;
 
   search = {
     level: '',
@@ -17,12 +21,18 @@ export class LogsComponent implements OnInit {
     date: ''
   };
 
-  levels = ['ERROR', 'WARN', 'INFO', 'DEBUG'];
+  levels = ['ERROR', 'WARN', 'INFO'];
 
   constructor(private logService: LogService) {}
 
   ngOnInit(): void {
     this.loadLogs();
+    
+    // Initialiser le modal
+    const modalElement = document.getElementById('logDetailsModal');
+    if (modalElement) {
+      this.logDetailsModal = new bootstrap.Modal(modalElement);
+    }
   }
 
   loadLogs(): void {
@@ -32,14 +42,15 @@ export class LogsComponent implements OnInit {
         // Transformer les données pour correspondre au format attendu
         this.logs = data.map(log => ({
           id: log.id,
-          timestamp: new Date(log.dateHeure || log.timestamp),
-          level: log.niveau || log.level,
-          source: log.source,
-          message: log.message,
-          details: log.details || log.message
+          timestamp: log.dateCreation ? new Date(log.dateCreation) : new Date(),
+          level: log.niveauLog || 'INFO',
+          source: log.typeAction || 'SYSTEM',
+          message: log.message || '',
+          details: log.details || log.message || 'Aucun détail'
         }));
         this.filteredLogs = [...this.logs];
         this.loading = false;
+        console.log('Logs chargés:', this.logs);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des logs:', error);
@@ -78,6 +89,33 @@ export class LogsComponent implements OnInit {
       case 'INFO': return 'badge-info';
       case 'DEBUG': return 'badge-secondary';
       default: return 'badge-secondary';
+    }
+  }
+
+  showLogDetails(log: any): void {
+    this.selectedLog = log;
+    if (this.logDetailsModal) {
+      this.logDetailsModal.show();
+    }
+  }
+
+  closeLogDetails(): void {
+    if (this.logDetailsModal) {
+      this.logDetailsModal.hide();
+    }
+    this.selectedLog = null;
+  }
+
+  formatDetails(details: string): string {
+    if (!details) return 'Aucun détail';
+    
+    // Si c'est du JSON, le formater
+    try {
+      const parsed = JSON.parse(details);
+      return JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      // Si ce n'est pas du JSON, retourner tel quel
+      return details;
     }
   }
 }

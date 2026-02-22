@@ -1,51 +1,71 @@
-<!-- Bouton de retour -->
-<div class="mb-3">
-  <button class="btn btn-outline-secondary" routerLink="/admin/dashboard">
-    <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
-  </button>
-</div>
-
-<form class="d-flex mb-3" (ngSubmit)="onSearch()" #searchForm="ngForm" style="gap: 8px; align-items: stretch;">
-  <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="search.nom" name="nom" style="max-width: 140px;">
-  <input type="text" class="form-control" placeholder="Version" [(ngModel)]="search.version" name="version" style="max-width: 120px;">
-  <div class="dropdown" style="max-width: 160px;">
-    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <span *ngIf="search.logoUrl" class="d-flex align-items-center">
-        <img [src]="search.logoUrl" alt="logo" style="height: 28px; width: 42px; object-fit: contain; margin-right: 8px;">
-        <span class="logo-name">{{ getLogoName(search.logoUrl) }}</span>
-      </span>
-      <span *ngIf="!search.logoUrl">Sélectionner Logo</span>
-    </button>
-    <ul class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto;">
-      <li>
-        <a class="dropdown-item" href="#" (click)="search.logoUrl = ''; onSearch(); $event.preventDefault();">
-          <span style="margin-left: 6px;">Aucun filtre</span>
-        </a>
-      </li>
-      <li *ngFor="let url of logoUrls">
-        <a class="dropdown-item d-flex align-items-center" href="#" (click)="search.logoUrl = url; onSearch(); $event.preventDefault();">
-          <img [src]="url" alt="logo" style="height: 32px; width: 48px; object-fit: contain; margin-right: 8px;">
-          <span class="logo-name">{{ getLogoName(url) }}</span>
-        </a>
-      </li>
-    </ul>
+<div class="applications-open-source">
+  <div class="page-header">
+    <h1><i class="bi bi-app"></i> Applications Open Source</h1>
+    <p>Gérer les applications open source disponibles</p>
   </div>
-  <button type="submit"
-          class="btn btn-outline-primary"
-          [disabled]="!atLeastOneFilled()"
-          style="width: 40px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 0px;">
-    <i class="bi bi-search" style="font-size: 1.1rem;"></i>
-  </button>
-  <button type="button"
-          class="btn btn-outline-secondary"
-          (click)="resetFilters()"
-          style="width: 40px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; margin-top: 0px;">
-    <i class="bi bi-arrow-clockwise" style="font-size: 1.1rem;"></i>
-  </button>
-</form>
 
-<div class="table-responsive">
-  <table class="table table-bordered table-striped table-hover text-center">
+  <!-- Formulaire de recherche -->
+  <div class="search-section">
+    <form (ngSubmit)="onSearch()" #searchForm="ngForm" class="search-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="search.nom" name="nom">
+        </div>
+        <div class="form-group">
+          <label>Version</label>
+          <input type="text" class="form-control" placeholder="Version" [(ngModel)]="search.version" name="version">
+        </div>
+        <div class="form-group">
+          <label>Logo</label>
+          <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span *ngIf="search.logoUrl" class="d-flex align-items-center">
+                <img [src]="search.logoUrl" alt="logo" style="height: 20px; width: 30px; object-fit: contain; margin-right: 8px;">
+                <span class="logo-name">{{ getLogoName(search.logoUrl) }}</span>
+              </span>
+              <span *ngIf="!search.logoUrl">Sélectionner Logo</span>
+            </button>
+            <ul class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto;">
+              <li>
+                <a class="dropdown-item" href="#" (click)="search.logoUrl = ''; onSearch(); $event.preventDefault();">
+                  <span style="margin-left: 6px;">Aucun filtre</span>
+                </a>
+              </li>
+              <li *ngFor="let url of logoUrls">
+                <a class="dropdown-item d-flex align-items-center" href="#" (click)="search.logoUrl = url; onSearch(); $event.preventDefault();">
+                  <img [src]="url" alt="logo" style="height: 20px; width: 30px; object-fit: contain; margin-right: 8px;">
+                  <span class="logo-name">{{ getLogoName(url) }}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary icon-button" [disabled]="!atLeastOneFilled()" title="Rechercher">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-outline-secondary icon-button" (click)="resetFilters()" title="Actualiser">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tableau des applications -->
+  <div class="table-section">
+    <div *ngIf="loading" class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des applications...</p>
+    </div>
+    
+    <div class="table-responsive" *ngIf="!loading">
+      <table class="table table-bordered table-striped table-hover text-center">
     <thead class="thead-light">
       <tr>
         <th>Nom</th>
@@ -118,7 +138,15 @@
         </td>
       </tr>
     </tbody>
-  </table>
+      </table>
+    </div>
+
+    <!-- Message si aucune application -->
+    <div *ngIf="!loading && filteredApplications.length === 0" class="alert alert-warning text-center">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      Aucune application trouvée.
+    </div>
+  </div>
 </div>
 
 <!-- Modal de confirmation suppression -->

@@ -283,3 +283,23 @@
   margin-top: 0.25rem;
   color: #dc3545;
 }
+
+/* Lien Mot de passe oublié */
+.forgot-password-link {
+  color: #046aa1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+}
+
+.forgot-password-link:hover {
+  color: #003366;
+  text-decoration: underline !important;
+  transform: translateX(2px);
+}
+
+.forgot-password-link i {
+  font-size: 0.8rem;
+  margin-right: 0.3rem;
+}

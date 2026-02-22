@@ -10,6 +10,7 @@ declare var bootstrap: any;
 export class ApplicationOpenSourceComponent implements OnInit {
   applications: any[] = [];
   filteredApplications: any[] = [];
+  loading: boolean = false;
   editingId: number | null = null;
   editedApplication: any = null;
 
@@ -47,6 +48,7 @@ export class ApplicationOpenSourceComponent implements OnInit {
   }
 
   loadApplications() {
+    this.loading = true;
     console.log('Chargement des applications...');
     this.appService.getAll().subscribe({
       next: (data) => {
@@ -54,9 +56,11 @@ export class ApplicationOpenSourceComponent implements OnInit {
         this.applications = data;
         this.filteredApplications = data;
         this.logoUrls = Array.from(new Set(data.map(app => app.logoUrl).filter(url => !!url)));
+        this.loading = false;
       },
       error: (error) => {
         console.error('Erreur lors du chargement des applications:', error);
+        this.loading = false;
       }
     });
   }

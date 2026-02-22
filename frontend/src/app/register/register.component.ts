@@ -30,11 +30,22 @@ export class RegisterComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
+        // Réinitialiser les champs après succès
+        this.resetForm();
       },
       error: err => {
         this.errorMessage = err.error.message;
         this.isSignUpFailed = true;
       }
     });
+  }
+
+  resetForm(): void {
+    this.form = {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    };
   }
 }

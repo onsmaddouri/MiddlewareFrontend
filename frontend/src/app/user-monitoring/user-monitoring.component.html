@@ -28,17 +28,33 @@
   <!-- Statistiques utilisateur -->
   <div class="user-stats">
     <div class="stats-grid">
-      <div class="stat-card">
+      <div class="stat-card clickable-card" (click)="onStatCardClick('system-total')">
         <div class="stat-icon">
-          <i class="bi bi-diagram-3-fill"></i>
+          <i class="bi bi-globe"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getTotalFluxCount() }}</h3>
+          <p>Flux Totaux</p>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-globe"></i>
+        </div>
+      </div>
+
+      <div class="stat-card clickable-card" (click)="onStatCardClick('total')">
+        <div class="stat-icon">
+          <i class="bi bi-person-fill"></i>
         </div>
         <div class="stat-info">
           <h3>{{ getFluxCount() }}</h3>
           <p>Mes Flux</p>
         </div>
+        <div class="stat-badge">
+          <i class="bi bi-eye"></i>
+        </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card clickable-card" (click)="onStatCardClick('active')">
         <div class="stat-icon">
           <i class="bi bi-play-circle-fill"></i>
         </div>
@@ -46,9 +62,12 @@
           <h3>{{ getActiveFluxCount() }}</h3>
           <p>Flux Actifs</p>
         </div>
+        <div class="stat-badge">
+          <i class="bi bi-play"></i>
+        </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card clickable-card" (click)="onStatCardClick('completed')">
         <div class="stat-icon">
           <i class="bi bi-check-circle-fill"></i>
         </div>
@@ -56,15 +75,21 @@
           <h3>{{ getCompletedFluxCount() }}</h3>
           <p>Flux Terminés</p>
         </div>
+        <div class="stat-badge">
+          <i class="bi bi-check"></i>
+        </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card clickable-card" (click)="onStatCardClick('failed')">
         <div class="stat-icon">
           <i class="bi bi-x-circle-fill"></i>
         </div>
         <div class="stat-info">
           <h3>{{ getFailedFluxCount() }}</h3>
           <p>Flux Échoués</p>
+        </div>
+        <div class="stat-badge">
+          <i class="bi bi-x"></i>
         </div>
       </div>
     </div>
@@ -161,6 +186,66 @@
                   *ngIf="flux.statut === 'EN_COURS'">
             <i class="bi bi-pause"></i> Pause
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carte d'information détaillée -->
+  <div class="info-card-overlay" *ngIf="showInfoCard" (click)="closeInfoCard()">
+    <div class="info-card" (click)="$event.stopPropagation()">
+      <div class="info-card-header">
+        <h3>{{ infoCardTitle }}</h3>
+        <button class="close-btn" (click)="closeInfoCard()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="info-card-content">
+        <div *ngIf="loadingDetails" class="loading-container">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Chargement...</span>
+          </div>
+          <p>Chargement des données...</p>
+        </div>
+
+        <div *ngIf="!loadingDetails && infoCardData.length === 0" class="no-data">
+          <i class="bi bi-inbox"></i>
+          <p>Aucune donnée disponible</p>
+        </div>
+
+        <div *ngIf="!loadingDetails && infoCardData.length > 0" class="data-list">
+          <div *ngFor="let item of infoCardData" class="data-item">
+            <div class="item-info">
+              <h4>{{ getItemName(item) }}</h4>
+              <p>{{ getItemDescription(item) }}</p>
+            </div>
+            <button class="detail-btn" (click)="showItemDetails(item)">
+              <i class="bi bi-eye"></i>
+              Détail
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de détails d'un élément -->
+  <div class="details-modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="details-modal" (click)="$event.stopPropagation()">
+      <div class="details-modal-header">
+        <h3>Détails de {{ selectedItemName }}</h3>
+        <button class="close-btn" (click)="closeDetailsModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="details-modal-content">
+        <div class="details-grid">
+          <div *ngFor="let detail of selectedItemDetails" class="detail-item">
+            <span class="detail-label">{{ detail.label }}:</span>
+            <span class="detail-value">{{ detail.value }}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -91,3 +91,22 @@
   background-color: #6c757d;
   color: white;
 }
+
+/* Modal styles */
+.info-item {
+  margin-bottom: 15px;
+}
+
+.info-item strong {
+  color: #046aa1;
+  font-size: 1rem;
+}
+
+.info-item .bg-light {
+  border: 1px solid #dee2e6;
+}
+
+pre {
+  font-family: 'Courier New', monospace;
+  color: #333;
+}

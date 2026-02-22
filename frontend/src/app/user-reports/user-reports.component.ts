@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ReportService } from '../_services/report.service';
+import { HttpClient } from '@angular/common/http';
+
+const API_URL = 'http://localhost:8080/api/reports/';
 
 @Component({
   selector: 'app-user-reports',
@@ -7,50 +9,88 @@ import { ReportService } from '../_services/report.service';
   styleUrls: ['./user-reports.component.css']
 })
 export class UserReportsComponent implements OnInit {
-  reports: any[] = [];
+  fluxList: any[] = [];
+  selectedFlux: any = null;
+  selectedReport: any = null;
   loading: boolean = false;
+  loadingReport: boolean = false;
 
-  constructor(private reportService: ReportService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadReports();
+    this.loadFluxList();
   }
 
-  loadReports(): void {
+  loadFluxList(): void {
     this.loading = true;
-    this.reportService.getAll().subscribe({
+    this.http.get<any[]>(API_URL + 'flux').subscribe({
       next: (data: any[]) => {
-        // Transformer les données pour correspondre au format attendu
-        this.reports = data.map(report => ({
-          id: report.id,
-          title: report.titre || report.title,
-          description: report.description,
-          type: report.type,
-          dateGenerated: new Date(report.dateGeneration || report.dateGenerated),
-          status: report.statut || report.status
-        }));
+        this.fluxList = data;
         this.loading = false;
+        console.log('Liste des flux chargée:', this.fluxList);
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des rapports:', error);
+        console.error('Erreur lors du chargement des flux:', error);
         this.loading = false;
       }
     });
   }
 
-  downloadReport(report: any): void {
-    this.reportService.downloadReport(report.id).subscribe({
-      next: (blob) => {
+  showFluxReport(flux: any): void {
+    this.loadingReport = true;
+    this.selectedFlux = flux;
+    
+    this.http.get<any>(API_URL + 'flux/' + flux.fluxId).subscribe({
+      next: (report: any) => {
+        this.selectedReport = report;
+        this.loadingReport = false;
+        console.log('Rapport chargé:', report);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement du rapport:', error);
+        this.loadingReport = false;
+      }
+    });
+  }
+
+  closeReport(): void {
+    this.selectedReport = null;
+    this.selectedFlux = null;
+  }
+
+  downloadPDF(fluxId: number, fluxName: string): void {
+    this.http.get(API_URL + 'flux/' + fluxId + '/pdf', { 
+      responseType: 'blob' 
+    }).subscribe({
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${report.title}.pdf`;
+        link.download = `rapport_${fluxName}_${fluxId}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
       },
       error: (error) => {
-        console.error('Erreur lors du téléchargement:', error);
+        console.error('Erreur lors du téléchargement du PDF:', error);
+        alert('Erreur lors du téléchargement du PDF');
       }
     });
+  }
+
+  getSuccessRateClass(rate: number): string {
+    if (rate >= 80) return 'text-success';
+    if (rate >= 50) return 'text-warning';
+    return 'text-danger';
+  }
+
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'SUCCES': return 'badge-success';
+      case 'ERREUR': return 'badge-danger';
+      case 'EN_COURS': return 'badge-info';
+      case 'EN_ATTENTE': return 'badge-warning';
+      case 'ACTIF': return 'badge-primary';
+      default: return 'badge-secondary';
+    }
   }
 }

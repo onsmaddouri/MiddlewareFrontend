@@ -10,6 +10,7 @@ declare var bootstrap: any;
 export class ERPComponent implements OnInit {
   erps: any[] = [];
   filteredErps: any[] = [];
+  loading: boolean = false;
   editingId: number | null = null;
   editedErp: any = null;
 
@@ -46,10 +47,18 @@ export class ERPComponent implements OnInit {
   }
 
   loadErps() {
-    this.erpService.getAll().subscribe(data => {
-      this.erps = data;
-      this.filteredErps = data;
-      this.logoUrls = Array.from(new Set(data.map(erp => erp.logoUrl).filter(url => !!url)));
+    this.loading = true;
+    this.erpService.getAll().subscribe({
+      next: (data) => {
+        this.erps = data;
+        this.filteredErps = data;
+        this.logoUrls = Array.from(new Set(data.map(erp => erp.logoUrl).filter(url => !!url)));
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des ERP:', error);
+        this.loading = false;
+      }
     });
   }
 

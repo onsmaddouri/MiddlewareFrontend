@@ -68,16 +68,87 @@
           </td>
           <td>{{ log.source }}</td>
           <td>{{ log.message }}</td>
-          <td>
+          <td class="text-center">
             <button class="btn btn-sm btn-outline-info" 
-                    [attr.data-bs-toggle]="'tooltip'" 
-                    [attr.data-bs-placement]="'top'" 
-                    [title]="log.details">
+                    (click)="showLogDetails(log)"
+                    title="Voir les détails">
               <i class="bi bi-info-circle"></i>
             </button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- Modal pour afficher les détails du log -->
+<div class="modal fade" id="logDetailsModal" tabindex="-1" aria-labelledby="logDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <div class="modal-header" style="background: linear-gradient(to bottom, #204d74 0%, #4a77a8 100%); color: white; border-radius: 15px 15px 0 0;">
+        <h5 class="modal-title" id="logDetailsModalLabel">
+          <i class="bi bi-info-circle-fill me-2"></i>Détails du Log
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeLogDetails()" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body p-4" *ngIf="selectedLog">
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="info-item">
+              <strong><i class="bi bi-calendar me-2"></i>Date/Heure:</strong>
+              <span class="ms-2">{{ selectedLog.timestamp | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="info-item">
+              <strong><i class="bi bi-exclamation-triangle me-2"></i>Niveau:</strong>
+              <span class="badge ms-2" [ngClass]="getLogLevelBadgeClass(selectedLog.level)">
+                {{ selectedLog.level }}
+              </span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-item">
+              <strong><i class="bi bi-box me-2"></i>Source:</strong>
+              <span class="ms-2">{{ selectedLog.source }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="info-item">
+              <strong><i class="bi bi-chat-left-text me-2"></i>Message:</strong>
+              <div class="mt-2 p-3 bg-light rounded">
+                {{ selectedLog.message }}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row" *ngIf="selectedLog.details && selectedLog.details !== selectedLog.message">
+          <div class="col-12">
+            <div class="info-item">
+              <strong><i class="bi bi-file-earmark-text me-2"></i>Détails:</strong>
+              <div class="mt-2 p-3 bg-light rounded" style="max-height: 300px; overflow-y: auto;">
+                <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.9em;">{{ formatDetails(selectedLog.details) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" 
+                class="btn btn-secondary" 
+                (click)="closeLogDetails()">
+          <i class="bi bi-x-circle me-2"></i>Fermer
+        </button>
+      </div>
+    </div>
   </div>
 </div>

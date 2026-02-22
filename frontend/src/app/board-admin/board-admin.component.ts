@@ -275,7 +275,6 @@ export class BoardAdminComponent implements OnInit {
   }
 
   addUserDetails(details: {label: string, value: string}[], user: any): void {
-    if (user.id) details.push({label: 'ID', value: user.id.toString()});
     if (user.username) details.push({label: 'Nom d\'utilisateur', value: user.username});
     if (user.email) details.push({label: 'Email', value: user.email});
     if (user.roles && user.roles.length > 0) {
@@ -286,7 +285,6 @@ export class BoardAdminComponent implements OnInit {
   }
 
   addFluxDetails(details: {label: string, value: string}[], flux: any): void {
-    if (flux.idFlux) details.push({label: 'ID Flux', value: flux.idFlux.toString()});
     if (flux.nomFlux) details.push({label: 'Nom', value: flux.nomFlux});
     if (flux.typeFlux) details.push({label: 'Type', value: flux.typeFlux});
     if (flux.statut) details.push({label: 'Statut', value: flux.statut});
@@ -302,7 +300,6 @@ export class BoardAdminComponent implements OnInit {
   }
 
   addConnecteurDetails(details: {label: string, value: string}[], connecteur: any): void {
-    if (connecteur.id) details.push({label: 'ID', value: connecteur.id.toString()});
     if (connecteur.nom) details.push({label: 'Nom', value: connecteur.nom});
     if (connecteur.type) details.push({label: 'Type', value: connecteur.type});
     if (connecteur.protocole) details.push({label: 'Protocole', value: connecteur.protocole});
@@ -317,18 +314,15 @@ export class BoardAdminComponent implements OnInit {
   }
 
   addGenerateurDetails(details: {label: string, value: string}[], generateur: any): void {
-    if (generateur.idGenerateur) details.push({label: 'ID', value: generateur.idGenerateur.toString()});
     if (generateur.nom) details.push({label: 'Nom', value: generateur.nom});
     if (generateur.description) details.push({label: 'Description', value: generateur.description});
     if (generateur.source) details.push({label: 'Source', value: generateur.source});
     if (generateur.destination) details.push({label: 'Destination', value: generateur.destination});
     if (generateur.format) details.push({label: 'Format', value: generateur.format});
     if (generateur.dateCreation) details.push({label: 'Date de création', value: new Date(generateur.dateCreation).toLocaleDateString()});
-    if (generateur.utilisateurId) details.push({label: 'Utilisateur ID', value: generateur.utilisateurId.toString()});
   }
 
   addERPDetails(details: {label: string, value: string}[], erp: any): void {
-    if (erp.id) details.push({label: 'ID', value: erp.id.toString()});
     if (erp.nom) details.push({label: 'Nom', value: erp.nom});
     if (erp.description) details.push({label: 'Description', value: erp.description});
     if (erp.version) details.push({label: 'Version', value: erp.version});
@@ -337,7 +331,7 @@ export class BoardAdminComponent implements OnInit {
 
   addGenericDetails(details: {label: string, value: string}[], item: any): void {
     // Afficher les propriétés les plus communes
-    const commonProps = ['id', 'nom', 'name', 'description', 'type', 'status', 'statut', 'actif', 'dateCreation', 'createdAt'];
+    const commonProps = ['nom', 'name', 'description', 'type', 'status', 'statut', 'actif', 'dateCreation', 'createdAt'];
     
     commonProps.forEach(prop => {
       if (item[prop] !== undefined && item[prop] !== null) {
